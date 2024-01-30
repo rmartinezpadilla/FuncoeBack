@@ -1,0 +1,20 @@
+{
+  "uuid_student": "7df4fa2a-731b-4c99-9462-1cbb6e838cf5",
+  "document_type_uuid": "49519904-2a52-4c34-ba02-8d56d36c69df",
+  "identification_card": "10564987",
+  "birthdate": "1989-12-28",
+  "first_name": "Malisa",
+  "last_name": "Andrade",
+  "municipality": "Montería",
+  "address": "cll 19 # 23-43",
+  "phone": "31005650511",
+  "gender": "Femenino",
+  "blood_type": "B+",
+  "recommendation": "Asesor",
+  "advertising_medium": "facebook",
+  "day_uuid": "878f8d4895b6",
+  "created_at": "2024-01-30T18:47:31.552Z",
+  "working_day": "Mañana",
+  "registration_number": 6265005151,
+  "advisor_uuid": "e73ece29-b6e2-48d3-90a5-a8e4578bd119"
+}
