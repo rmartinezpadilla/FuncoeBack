@@ -4,7 +4,7 @@ from config.db import get_db,Session
 from models.concept import Concept as concept_models
 import uuid
 
-router =  APIRouter(prefix='/advisors', tags=['Advisors'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/concepts', tags=['Concepts'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")
@@ -77,7 +77,7 @@ def read_concept(uuid_concept: str):
         #un error, en este caso el error esta contenido en HTTPException
         
 @router.delete("/{uuid_concept}")
-def delete_advisor(uuid_concept: str):
+def delete_concept(uuid_concept: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except
