@@ -1,30 +1,30 @@
 from fastapi import APIRouter, Response, HTTPException, status
-from schemas.document_type import Document_type as doc_type_schema
+from schemas.concept import Concept as concept_schema
 from config.db import get_db,Session
-from models.document_type import Documents_types as doc_type_models
+from models.concept import Concept as concept_models
 import uuid
 
-router =  APIRouter(prefix='/document_type', tags=['Documents Types'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/concepts', tags=['Concepts'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")
-def create_document_type(doc_type_obj:doc_type_schema):
+def create_concept(concept_obj:concept_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
         for db in session:
-            #doc_type_obj["id"] = uuid.uuid4() 
-            # print(type('esto es', doc_type_obj))           
-            doc_type_obj = doc_type_models(**doc_type_obj.model_dump())            
+            #concept_obj["id"] = uuid.uuid4() 
+            # print(type('esto es', concept_obj))           
+            concept_obj = concept_models(**concept_obj.model_dump())            
             #añade el recurso persona para subirse a la base de datos
-            db.add(doc_type_obj)
+            db.add(concept_obj)
             #se sube a la base de datos
             db.commit()
             #se refresca la información en la variable persona para poderla devolver
             #en el servicio
-            db.refresh(doc_type_obj)
-            return doc_type_obj
+            db.refresh(concept_obj)
+            return concept_obj
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
         #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -34,8 +34,8 @@ def create_document_type(doc_type_obj:doc_type_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[doc_type_schema])
-def get_documents_types():
+@router.get("/", response_model = list[concept_schema])
+def get_concepts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -44,7 +44,7 @@ def get_documents_types():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(doc_type_models)
+            r=db.query(concept_models)
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -55,8 +55,8 @@ def get_documents_types():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{id}", response_model = doc_type_schema)
-def read_document_type(id: str):
+@router.get("/{uuid_concept}", response_model = concept_schema)
+def read_concept(uuid_concept: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -65,7 +65,7 @@ def read_document_type(id: str):
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(doc_type_models).where(doc_type_models.id == id).first()
+            r=db.query(concept_models).where(concept_models.uuid_concept == uuid_concept).first()
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -75,31 +75,9 @@ def read_document_type(id: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
-    
-@router.get("/{name}", response_model = doc_type_schema)
-def read_document_type_for_name(name: str):
-    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
-        #¡inicio try!
-            session = get_db()
-            db:Session
-            for db in session:
-                #se usa la instrucción where para buscar por el id y se ejecuta el first para
-                #encontrar la primera coincidencia, esto es posible porque el id es un 
-                #identificador unico
-                r=db.query(doc_type_models).where(doc_type_models.uuid_document_type == name).first()
-                #r=db.select(adv_models).where(adv_models.identification_card == id_card)
-                return r
-        #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-            #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-            #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-            #y es muy posible que la conexión falle por lo cual debemos responder que paso
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-            #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-            #un error, en este caso el error esta contenido en HTTPException
-    
-@router.delete("/{uuid_document_type}")
-def delete_document_type(uuid_document_type: str):
+        
+@router.delete("/{uuid_concept}")
+def delete_concept(uuid_concept: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except
@@ -111,7 +89,7 @@ def delete_document_type(uuid_document_type: str):
             #en caso que sea None se lanza un error, ya que no tenemos un dato con el id a borrar
             #si intentamos borrar algo que no existe (en el caso que sea None) nos lanzará una 
             #excepción y será atrapada en el except
-            r=db.query(doc_type_models).where(doc_type_models.uuid_document_type == uuid_document_type).one_or_none()
+            r=db.query(concept_models).where(concept_models.uuid_concept == uuid_concept).one_or_none()
             if r is not None:
                 db.delete(r)#instruccion para borrar un recurso
                 db.commit()
