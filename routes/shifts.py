@@ -1,33 +1,33 @@
 from fastapi import APIRouter, Response, HTTPException, status
-from schemas.payment import Payment as payment_schema
+from schemas.shifts import Shifts as shifts_schema
 from config.db import get_db,Session
-from models.payment import Payment as payment_model
+from models.shifts import Shifts as shifts_model
 import uuid
 from datetime import datetime
 
-router =  APIRouter(prefix='/payments', tags=['Payments'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/shifts', tags=['Shifts'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")
-def create_payment(payment_obj:payment_schema):
+def create_shifts(shifts_obj:shifts_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
         for db in session:
-            #advisor_obj["id"] = uuid.uuid4() 
-            # print(type('esto es', advisor_obj))           
-            payment_obj = payment_model(**payment_obj.model_dump())  
-            payment_obj.uuid_pay = uuid.uuid4()
-            payment_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')          
+            #shifts_obj["id"] = uuid.uuid4() 
+            # print(type('esto es', shifts_obj))           
+            shifts_obj = shifts_model(**shifts_obj.model_dump())  
+            shifts_obj.uuid_shifts = uuid.uuid4()
+            shifts_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')          
             #añade el recurso persona para subirse a la base de datos
-            db.add(payment_obj)
+            db.add(shifts_obj)
             #se sube a la base de datos
             db.commit()
             #se refresca la información en la variable persona para poderla devolver
             #en el servicio
-            db.refresh(payment_obj)
-            return payment_obj
+            db.refresh(shifts_obj)
+            return shifts_obj
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
         #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -37,8 +37,8 @@ def create_payment(payment_obj:payment_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[payment_schema])
-def get_payments():
+@router.get("/", response_model = list[shifts_schema])
+def get_shifts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -47,7 +47,7 @@ def get_payments():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(payment_model)
+            r=db.query(shifts_model)
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -58,8 +58,8 @@ def get_payments():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_payment}", response_model = payment_schema)
-def read_payment(uuid_payment: str):
+@router.get("/{uuid_shifts}", response_model = shifts_schema)
+def read_shifts(uuid_shifts: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -68,7 +68,7 @@ def read_payment(uuid_payment: str):
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(payment_model).where(payment_model.uuid_pay == uuid_payment).first()
+            r=db.query(shifts_model).where(shifts_model.uuid_shifts == uuid_shifts).first()
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -79,7 +79,7 @@ def read_payment(uuid_payment: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-# @router.get("/{identification_card}", response_model = payment_schema)
+# @router.get("/{identification_card}", response_model = shifts_schema)
 # def read_advisor_identification_card(id_card: str):
 #     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
 #         #¡inicio try!
@@ -89,8 +89,8 @@ def read_payment(uuid_payment: str):
 #                 #se usa la instrucción where para buscar por el id y se ejecuta el first para
 #                 #encontrar la primera coincidencia, esto es posible porque el id es un 
 #                 #identificador unico
-#                 r=db.query(payment_model).where(payment_model.identification_card == id_card).first()
-#                 #r=db.select(payment_model).where(payment_model.identification_card == id_card)
+#                 r=db.query(shifts_model).where(shifts_model.identification_card == id_card).first()
+#                 #r=db.select(shifts_model).where(shifts_model.identification_card == id_card)
 #                 return r
 #         #¡fin try!
 #     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -101,8 +101,8 @@ def read_payment(uuid_payment: str):
 #             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
 #             #un error, en este caso el error esta contenido en HTTPException
     
-@router.delete("/{uuid_payment}")
-def delete_payment(uuid_payment: str):
+@router.delete("/{uuid_shifts}")
+def delete_shifts(uuid_shifts: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except
@@ -114,7 +114,7 @@ def delete_payment(uuid_payment: str):
             #en caso que sea None se lanza un error, ya que no tenemos un dato con el id a borrar
             #si intentamos borrar algo que no existe (en el caso que sea None) nos lanzará una 
             #excepción y será atrapada en el except
-            r=db.query(payment_model).where(payment_model.uuid_pay == uuid_payment).one_or_none()
+            r=db.query(shifts_model).where(shifts_model.uuid_shifts == uuid_shifts).one_or_none()
             if r is not None:
                 db.delete(r)#instruccion para borrar un recurso
                 db.commit()
