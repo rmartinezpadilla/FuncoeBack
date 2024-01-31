@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Response, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 from schemas.semester import Semester as semester_schema
-from config.db import get_db,Session
+from schemas.semester import SemesterUpdate as semester_update_schema
+from config.db import get_db, Session
 from models.semester import Semester as semester_model
+from datetime import datetime
 import uuid
 
 router =  APIRouter(prefix='/semesters', tags=['Semesters'], responses={404 : {'message' : 'Not found'}})
@@ -16,7 +19,9 @@ def create_semester(semester_obj:semester_schema):
         for db in session:
             #semester_obj["id"] = uuid.uuid4() 
             # print(type('esto es', semester_obj))           
-            semester_obj = semester_model(**semester_obj.model_dump())            
+            semester_obj = semester_model(**semester_obj.model_dump())
+            semester_obj.uuid_semester = uuid.uuid4()
+            semester_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
             #añade el recurso persona para subirse a la base de datos
             db.add(semester_obj)
             #se sube a la base de datos
@@ -126,3 +131,27 @@ def delete_semester(uuid_semester: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException            }
+    
+@router.put("/{uuid_semester}")
+async def update_semester(uuid_semester : str, semester_obj_update : semester_update_schema):
+    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+    #¡inicio try!
+        session = get_db()
+        db:Session
+        for db in session:
+            r=db.query(semester_model).filter(semester_model.uuid_semester == uuid_semester).first()            
+            if r is not None:
+                session.update(semester_obj_update)#instruccion para borrar un recurso
+                db.commit()
+                #return Response(status_code=status.HTTP_200_OK)
+                return r
+            else:
+                return Response(status_code=status.HTTP_404_NOT_FOUND)  
+    #¡fin try!
+    except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
+        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
+        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
+        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
+        #un error, en este caso el error esta contenido en HTTPException

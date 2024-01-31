@@ -5,7 +5,7 @@ from datetime import datetime
 class Advisor(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear una persona
-    uuid_advisor:Optional[str] = None
+    #uuid_advisor:Optional[str] = None
     document_type_uuid:str
     identification_card:str
     first_name:str
@@ -14,8 +14,8 @@ class Advisor(BaseModel):
     blood_type:str
     # created_at:datetime
     # updated_at:datetime
-    created_at:Optional[datetime] = None
-    updated_at:Optional[datetime] = None
+    #created_at:Optional[datetime] = None
+    #updated_at:Optional[datetime] = None
     
 
 #class Advisor_request(BaseModel):

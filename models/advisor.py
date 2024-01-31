@@ -14,4 +14,4 @@ class Advisor(Base): #modelo de asesor que representa la tabla en la base de dat
     phone = Column(String(255),nullable=False)
     blood_type = Column(String(255),nullable=False)    
     created_at = Column(DateTime, default=datetime.now, nullable=False)    
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    updated_at = Column(DateTime, default=datetime.now, nullable=False)
