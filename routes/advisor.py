@@ -3,6 +3,7 @@ from schemas.advisor import Advisor as adv_schema
 from config.db import get_db,Session
 from models.advisor import Advisor as adv_models
 import uuid
+from datetime import datetime
 
 router =  APIRouter(prefix='/advisors', tags=['Advisors'], responses={404 : {'message' : 'Not found'}})
 
@@ -16,7 +17,9 @@ def create_advisor(advisor_obj:adv_schema):
         for db in session:
             #advisor_obj["id"] = uuid.uuid4() 
             # print(type('esto es', advisor_obj))           
-            advisor_obj = adv_models(**advisor_obj.model_dump())            
+            advisor_obj = adv_models(**advisor_obj.model_dump())  
+            advisor_obj.uuid_advisor = uuid.uuid4()
+            advisor_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')          
             #añade el recurso persona para subirse a la base de datos
             db.add(advisor_obj)
             #se sube a la base de datos

@@ -1,35 +1,30 @@
 from fastapi import APIRouter, Response, HTTPException, status
-from fastapi.encoders import jsonable_encoder
-from schemas.semester import Semester as semester_schema
-from schemas.semester import SemesterUpdate as semester_update_schema
-from config.db import get_db, Session
-from models.semester import Semester as semester_model
-from datetime import datetime
+from schemas.enroll import Enroll as enroll_schema
+from config.db import get_db,Session
+from models.enroll import Enroll as enroll_model
 import uuid
 
-router =  APIRouter(prefix='/semesters', tags=['Semesters'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/enrolls', tags=['Enrolls'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")
-def create_semester(semester_obj:semester_schema):
+def create_enroll(advisor_obj:enroll_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
         for db in session:
-            #semester_obj["id"] = uuid.uuid4() 
-            # print(type('esto es', semester_obj))           
-            semester_obj = semester_model(**semester_obj.model_dump())
-            semester_obj.uuid_semester = uuid.uuid4()
-            semester_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+            #advisor_obj["id"] = uuid.uuid4() 
+            # print(type('esto es', advisor_obj))           
+            advisor_obj = enroll_model(**advisor_obj.model_dump())            
             #añade el recurso persona para subirse a la base de datos
-            db.add(semester_obj)
+            db.add(advisor_obj)
             #se sube a la base de datos
             db.commit()
             #se refresca la información en la variable persona para poderla devolver
             #en el servicio
-            db.refresh(semester_obj)
-            return semester_obj
+            db.refresh(advisor_obj)
+            return advisor_obj
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
         #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -39,8 +34,8 @@ def create_semester(semester_obj:semester_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[semester_schema])
-def get_semesters():
+@router.get("/", response_model = list[enroll_schema])
+def get_enrolls():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -49,7 +44,7 @@ def get_semesters():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(semester_model)
+            r=db.query(enroll_model)
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -60,8 +55,8 @@ def get_semesters():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{id}", response_model = semester_schema)
-def read_semester(uuid_semester: str):
+@router.get("/{uuid_enroll}", response_model = enroll_schema)
+def read_enroll(uuid_enroll: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -70,7 +65,7 @@ def read_semester(uuid_semester: str):
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(semester_model).where(semester_model.uuid_semester == uuid_semester).first()
+            r=db.query(enroll_model).where(enroll_model.uuid_enroll == uuid_enroll).first()
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -81,30 +76,30 @@ def read_semester(uuid_semester: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-@router.get("/{name}", response_model = semester_schema)
-def read_semester_name(name: str):
-    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
-        #¡inicio try!
-            session = get_db()
-            db:Session
-            for db in session:
-                #se usa la instrucción where para buscar por el id y se ejecuta el first para
-                #encontrar la primera coincidencia, esto es posible porque el id es un 
-                #identificador unico
-                r=db.query(semester_model).where(semester_model.name == name).first()
-                #r=db.select(semester_model).where(semester_model.identification_card == id_card)
-                return r
-        #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-            #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-            #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-            #y es muy posible que la conexión falle por lo cual debemos responder que paso
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-            #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-            #un error, en este caso el error esta contenido en HTTPException
+# @router.get("/{identification_card}", response_model = enroll_schema)
+# def read_student_identification_card(number_card: str):
+#     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+#         #¡inicio try!
+#             session = get_db()
+#             db:Session
+#             for db in session:
+#                 #se usa la instrucción where para buscar por el id y se ejecuta el first para
+#                 #encontrar la primera coincidencia, esto es posible porque el id es un 
+#                 #identificador unico
+#                 r=db.query(enroll_model).where(enroll_model.identification_card == number_card).first()
+#                 #r=db.select(enroll_model).where(enroll_model.identification_card == number_card)
+#                 return r
+#         #¡fin try!
+#     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
+#             #se debe controlar siempre que nos conectamos a una base de datos con un try - except
+#             #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
+#             #y es muy posible que la conexión falle por lo cual debemos responder que paso
+#             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+#             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
+#             #un error, en este caso el error esta contenido en HTTPException
     
-@router.delete("/{uuid_semester}")
-def delete_semester(uuid_semester: str):
+@router.delete("/{uuid_enroll}")
+def delete_enroll(uuid_enroll: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except
@@ -116,7 +111,7 @@ def delete_semester(uuid_semester: str):
             #en caso que sea None se lanza un error, ya que no tenemos un dato con el id a borrar
             #si intentamos borrar algo que no existe (en el caso que sea None) nos lanzará una 
             #excepción y será atrapada en el except
-            r=db.query(semester_model).where(semester_model.uuid_semester == uuid_semester).one_or_none()
+            r=db.query(enroll_model).where(enroll_model.uuid_enroll == uuid_enroll).one_or_none()
             if r is not None:
                 db.delete(r)#instruccion para borrar un recurso
                 db.commit()
@@ -131,27 +126,3 @@ def delete_semester(uuid_semester: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException            }
-    
-@router.put("/{uuid_semester}")
-async def update_semester(uuid_semester : str, semester_obj_update : semester_update_schema):
-    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
-    #¡inicio try!
-        session = get_db()
-        db:Session
-        for db in session:
-            r=db.query(semester_model).filter(semester_model.uuid_semester == uuid_semester).first()            
-            if r is not None:
-                session.update(semester_obj_update)#instruccion para borrar un recurso
-                db.commit()
-                #return Response(status_code=status.HTTP_200_OK)
-                return r
-            else:
-                return Response(status_code=status.HTTP_404_NOT_FOUND)  
-    #¡fin try!
-    except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException
