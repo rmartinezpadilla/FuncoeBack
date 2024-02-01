@@ -10,6 +10,7 @@ class Teacher(BaseModel):
     identification_card:str    
     first_name:str
     last_name:str
+    blood_type:str
     phone:str    
     user:str
     password:str
