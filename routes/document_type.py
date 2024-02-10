@@ -65,7 +65,7 @@ async def read_document_type(id: str):
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(doc_type_models).where(doc_type_models.uuid_document_type == id).first()
+            r=db.query(doc_type_models).where(doc_type_models.uuid_document_type == id).first()            
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla

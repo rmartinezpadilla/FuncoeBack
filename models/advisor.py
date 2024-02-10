@@ -1,5 +1,5 @@
 from config.db import Base
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, DateTime
 from sqlalchemy.sql import func
 from datetime import datetime
 
@@ -12,6 +12,7 @@ class Advisor(Base): #modelo de asesor que representa la tabla en la base de dat
     first_name = Column(String(255),nullable=False)
     last_name = Column(String(255),nullable=False)
     phone = Column(String(255),nullable=False)
+    email = Column(String(255),nullable=False)
     blood_type = Column(String(255),nullable=False)    
     created_at = Column(DateTime, default=datetime.now, nullable=False)    
     updated_at = Column(DateTime, default=datetime.now, nullable=False)

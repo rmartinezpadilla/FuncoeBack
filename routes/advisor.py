@@ -48,6 +48,7 @@ def get_advisors():
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
             r=db.query(adv_models)
+            print(read_document_type(adv_models.document_type_uuid))    
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla

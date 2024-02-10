@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from routes import advisor, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role
 
+
 app = FastAPI()
 
 app.include_router(advisor.router)

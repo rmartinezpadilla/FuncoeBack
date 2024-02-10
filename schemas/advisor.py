@@ -11,6 +11,7 @@ class Advisor(BaseModel):
     first_name:str
     last_name:str
     phone:str
+    email:str
     blood_type:str
     # created_at:datetime
     # updated_at:datetime
