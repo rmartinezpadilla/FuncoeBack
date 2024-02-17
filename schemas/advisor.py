@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
@@ -11,7 +11,7 @@ class Advisor(BaseModel):
     first_name:str
     last_name:str
     phone:str
-    email:str
+    email:EmailStr
     blood_type:str
     # created_at:datetime
     # updated_at:datetime
