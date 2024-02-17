@@ -6,7 +6,6 @@ import uuid
 
 router =  APIRouter(prefix='/students', tags=['Students'], responses={404 : {'message' : 'Not found'}})
 
-
 @router.post("/")
 def create_student(advisor_obj:student_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
@@ -34,7 +33,7 @@ def create_student(advisor_obj:student_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[student_schema])
+@router.get("/allStudents", response_model = list[student_schema])
 def get_students():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -76,8 +75,8 @@ def read_student(uuid_student: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-@router.get("/{identification_card}", response_model = student_schema)
-def read_student_identification_card(number_card: str):
+@router.get("/", response_model = student_schema)
+def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
             session = get_db()
@@ -86,9 +85,13 @@ def read_student_identification_card(number_card: str):
                 #se usa la instrucción where para buscar por el id y se ejecuta el first para
                 #encontrar la primera coincidencia, esto es posible porque el id es un 
                 #identificador unico
-                r=db.query(student_models).where(student_models.identification_card == number_card).first()
-                #r=db.select(student_models).where(student_models.identification_card == number_card)
-                return r
+                r=db.query(student_models).where(number_document==student_models.identification_card).first()
+                #r=db.select(adv_models).where(adv_models.identification_card == number_document)
+                if r is not None:
+                    return r
+                else:
+                    return Response(status_code=status.HTTP_404_NOT_FOUND)
+                
         #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
             #se debe controlar siempre que nos conectamos a una base de datos con un try - except

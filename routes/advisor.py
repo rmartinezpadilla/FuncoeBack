@@ -38,7 +38,7 @@ def create_advisor(advisor_obj:adv_schema_create):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[adv_schema_response])
+@router.get("/all", response_model = list[adv_schema_response])
 def get_advisors():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -60,7 +60,7 @@ def get_advisors():
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{id}", response_model = adv_schema_response)
-def read_advisor(id: str):
+def read_advisor(uuid: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -69,7 +69,7 @@ def read_advisor(id: str):
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(adv_models).where(adv_models.uuid_advisor == id).first()
+            r=db.query(adv_models).where(adv_models.uuid_advisor == uuid).first()
             if r is not None:               
                 return r
             else:
@@ -84,8 +84,8 @@ def read_advisor(id: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-@router.get("/{identification_card}", response_model = adv_schema_response)
-def read_advisor_identification_card(id_card: str):
+@router.get("/", response_model = adv_schema_response)
+def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
             session = get_db()
@@ -94,9 +94,13 @@ def read_advisor_identification_card(id_card: str):
                 #se usa la instrucción where para buscar por el id y se ejecuta el first para
                 #encontrar la primera coincidencia, esto es posible porque el id es un 
                 #identificador unico
-                r=db.query(adv_models).where(adv_models.identification_card == id_card).first()
-                #r=db.select(adv_models).where(adv_models.identification_card == id_card)
-                return r
+                r=db.query(adv_models).where(number_document==adv_models.identification_card).first()
+                #r=db.select(adv_models).where(adv_models.identification_card == number_document)
+                if r is not None:
+                    return r
+                else:
+                    return Response(status_code=status.HTTP_404_NOT_FOUND)
+                
         #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
             #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -105,7 +109,7 @@ def read_advisor_identification_card(id_card: str):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
             #un error, en este caso el error esta contenido en HTTPException
-    
+
 @router.delete("/{id}")
 def delete_advisor(id: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
