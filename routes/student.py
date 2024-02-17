@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.student import Student as student_schema
 from config.db import get_db,Session
 from models.student import Student as student_models
-import uuid
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/students', tags=['Students'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/students', dependencies=[Depends(JWTBearer())], tags=['Students'], responses={404 : {'message' : 'Not found'}})
 
 @router.post("/")
-def create_student(advisor_obj:student_schema):
+async def create_student(advisor_obj:student_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -34,7 +34,7 @@ def create_student(advisor_obj:student_schema):
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/allStudents", response_model = list[student_schema])
-def get_students():
+async def get_students():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -55,7 +55,7 @@ def get_students():
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{uuid_student}", response_model = student_schema)
-def read_student(uuid_student: str):
+async def read_student(uuid_student: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -76,7 +76,7 @@ def read_student(uuid_student: str):
         #un error, en este caso el error esta contenido en HTTPException
     
 @router.get("/", response_model = student_schema)
-def get_advisor_identification_card(number_document: int):
+async def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
             session = get_db()
@@ -102,7 +102,7 @@ def get_advisor_identification_card(number_document: int):
             #un error, en este caso el error esta contenido en HTTPException
     
 @router.delete("/{uuid_student}")
-def delete_student(uuid_student: str):
+async def delete_student(uuid_student: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except

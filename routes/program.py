@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.program import Program as program_schema
 from config.db import get_db,Session
 from models.program import Program as program_models
-import uuid
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/programs', tags=['Programs'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/programs', dependencies=[Depends(JWTBearer())], tags=['Programs'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")

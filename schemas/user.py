@@ -10,8 +10,13 @@ class User(BaseModel):
     first_name:str
     rol_uuid:str
     user:str
-    #is_active: bool
-    #password:str
+    password:str
+
+class User_login(BaseModel):
+    #modelo de pydantic que sirve para recibir los datos de entrada de la api
+    #en este caso lo utilizaremos para crear una persona    
+    user:str
+    password:str
 
 class User_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
@@ -22,9 +27,10 @@ class User_response(BaseModel):
     first_name:str
     rol_uuid:str
     user:str
+    password:str
     is_active: bool
     created_at: datetime
-    updated_at: datetime
-    last_connection: datetime
+    updated_at: Optional[datetime]
+    last_connection: Optional[datetime]
     #password:str 
     

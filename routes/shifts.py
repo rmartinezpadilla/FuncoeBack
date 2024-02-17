@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.shifts import Shifts as shifts_schema
 from config.db import get_db,Session
 from models.shifts import Shifts as shifts_model
 import uuid
 from datetime import datetime
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/shifts', tags=['Shifts'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/shifts', dependencies=[Depends(JWTBearer())], tags=['Shifts'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")

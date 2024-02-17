@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.advisor import Advisor_response as adv_schema_response
 from schemas.advisor import Advisor as adv_schema_create
 from config.db import get_db,Session
 from models.advisor import Advisor as adv_models
 import uuid
 from datetime import datetime
+from auth.auth_bearer import JWTBearer
 
 router =  APIRouter(prefix='/advisors', tags=['Advisors'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(JWTBearer())])
 def create_advisor(advisor_obj:adv_schema_create):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -38,7 +39,7 @@ def create_advisor(advisor_obj:adv_schema_create):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", response_model = list[adv_schema_response])
+@router.get("/all", dependencies=[Depends(JWTBearer())], response_model = list[adv_schema_response])
 def get_advisors():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -59,7 +60,7 @@ def get_advisors():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{id}", response_model = adv_schema_response)
+@router.get("/{id}", dependencies=[Depends(JWTBearer())], response_model = adv_schema_response)
 def read_advisor(uuid: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -84,7 +85,7 @@ def read_advisor(uuid: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-@router.get("/", response_model = adv_schema_response)
+@router.get("/", dependencies=[Depends(JWTBearer())], response_model = adv_schema_response)
 def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
@@ -110,7 +111,7 @@ def get_advisor_identification_card(number_document: int):
             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
             #un error, en este caso el error esta contenido en HTTPException
 
-@router.delete("/{id}")
+@router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 def delete_advisor(id: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
