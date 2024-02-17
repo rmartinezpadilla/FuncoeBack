@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import advisor, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role
+from routes import advisor, blood_type, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role
 
 
 app = FastAPI()
@@ -17,6 +17,7 @@ app.include_router(payment.router)
 app.include_router(pensum.router)
 app.include_router(shifts.router)
 app.include_router(role.router)
+app.include_router(blood_type.router)
 
 @app.get("/")
 async def root():
