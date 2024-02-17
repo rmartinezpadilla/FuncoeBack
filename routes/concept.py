@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.concept import Concept as concept_schema
 from config.db import get_db,Session
 from models.concept import Concept as concept_models
-import uuid
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/concepts', tags=['Concepts'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/concepts', dependencies=[Depends(JWTBearer())], tags=['Concepts'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")
@@ -34,7 +34,7 @@ def create_concept(concept_obj:concept_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[concept_schema])
+@router.get("/",response_model = list[concept_schema])
 def get_concepts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

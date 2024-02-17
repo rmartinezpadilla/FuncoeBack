@@ -1,15 +1,20 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.user import User as user_schema
 from schemas.user import User_response as user_schema_response
+from schemas.user import User_login as user_schema_login
+import bcrypt
+from auth.auth_bearer import JWTBearer
+
 from config.db import get_db,Session
 from models.user import User as user_model
 import uuid
 from datetime import datetime
+from auth.auth_handler import signJWT
 
 router =  APIRouter(prefix='/users', tags=['Users'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/", response_model= user_schema_response)
+@router.post("/", dependencies=[Depends(JWTBearer())], response_model= user_schema_response)
 def create_user(user_obj:user_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -20,6 +25,9 @@ def create_user(user_obj:user_schema):
             # print(type('esto es', advisor_obj))           
             user_obj = user_model(**user_obj.model_dump())  
             user_obj.uuid_user = uuid.uuid4()
+            salt = bcrypt.gensalt()
+            ashed = bcrypt.hashpw(user_obj.password.encode('utf-8'), salt)
+            user_obj.password=ashed
             user_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')          
             #añade el recurso persona para subirse a la base de datos
             db.add(user_obj)
@@ -38,7 +46,7 @@ def create_user(user_obj:user_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[user_schema_response])
+@router.get("/all", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
 def get_users():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -59,7 +67,7 @@ def get_users():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_user}", response_model = user_schema_response)
+@router.get("/{uuid_user}", dependencies=[Depends(JWTBearer())], response_model = user_schema_response)
 def read_user(uuid_user: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -80,7 +88,7 @@ def read_user(uuid_user: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-@router.delete("/{uuid_user}")
+@router.delete("/{uuid_user}", dependencies=[Depends(JWTBearer())])
 def delete_user(uuid_user: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -108,3 +116,32 @@ def delete_user(uuid_user: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException            }
+
+def check_user(data: user_schema_login):
+    session = get_db()
+    db:Session
+    for db in session:
+        r1=db.query(user_model).where(user_model.user==data.user).first()
+        r2=db.query(user_model).where(user_model.password==data.password).first()
+        if r1 is not None and r2 is not None:
+            return True
+        else:
+            return False
+    
+    # for user in users:
+    #     if user.email == data.email and user.password == data.password:
+    #         return True
+    # return False
+
+# @router.post("/signup")
+# def create_user(user: user_schema_login):    
+#     return signJWT(user.user)
+
+
+@router.post("/token")
+def get_token(user: user_schema_login):
+    if check_user(user):
+        return signJWT(user.user)
+    return {
+        "error": "Wrong login details!"
+    }

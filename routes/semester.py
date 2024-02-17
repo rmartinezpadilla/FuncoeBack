@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from fastapi.encoders import jsonable_encoder
 from schemas.semester import Semester as semester_schema
 from schemas.semester import SemesterUpdate as semester_update_schema
@@ -6,8 +6,9 @@ from config.db import get_db, Session
 from models.semester import Semester as semester_model
 from datetime import datetime
 import uuid
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/semesters', tags=['Semesters'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/semesters', dependencies=[Depends(JWTBearer())], tags=['Semesters'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")

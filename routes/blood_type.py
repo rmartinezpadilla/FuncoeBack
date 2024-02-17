@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from schemas.blood_type import Blood_type as blood_type_schema
 from config.db import get_db,Session
 from models.blood_type import Blood_type as blood_type_model
-import uuid
-from datetime import datetime
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/blood_type', tags=['Blood Types'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/blood_type', dependencies=[Depends(JWTBearer())], tags=['Blood Types'], responses={404 : {'message' : 'Not found'}})
 
 @router.get("/", response_model = list[blood_type_schema])
 def get_blood_types():

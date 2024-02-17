@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.student import Student as student_schema
 from config.db import get_db,Session
 from models.student import Student as student_models
-import uuid
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/students', tags=['Students'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/students', dependencies=[Depends(JWTBearer())], tags=['Students'], responses={404 : {'message' : 'Not found'}})
 
 @router.post("/")
 async def create_student(advisor_obj:student_schema):
