@@ -30,7 +30,7 @@ class Advisor_response(BaseModel):
     email:str
     blood_type:str
     created_at:datetime
-    updated_at:datetime
+    updated_at:Optional[datetime] = None
     #created_at:Optional[datetime] = None
     #updated_at:Optional[datetime] = None
 
