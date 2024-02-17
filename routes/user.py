@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, status
 from schemas.user import User as user_schema
+from schemas.user import User_response as user_schema_response
 from config.db import get_db,Session
 from models.user import User as user_model
 import uuid
@@ -8,7 +9,7 @@ from datetime import datetime
 router =  APIRouter(prefix='/users', tags=['Users'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/")
+@router.post("/", response_model= user_schema_response)
 def create_user(user_obj:user_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -37,7 +38,7 @@ def create_user(user_obj:user_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[user_schema])
+@router.get("/", response_model = list[user_schema_response])
 def get_users():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -58,7 +59,7 @@ def get_users():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_user}", response_model = user_schema)
+@router.get("/{uuid_user}", response_model = user_schema_response)
 def read_user(uuid_user: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -78,28 +79,6 @@ def read_user(uuid_user: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
-    
-# @router.get("/{identification_card}", response_model = user_schema)
-# def read_advisor_identification_card(id_card: str):
-#     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
-#         #¡inicio try!
-#             session = get_db()
-#             db:Session
-#             for db in session:
-#                 #se usa la instrucción where para buscar por el id y se ejecuta el first para
-#                 #encontrar la primera coincidencia, esto es posible porque el id es un 
-#                 #identificador unico
-#                 r=db.query(user_model).where(user_model.identification_card == id_card).first()
-#                 #r=db.select(user_model).where(user_model.identification_card == id_card)
-#                 return r
-#         #¡fin try!
-#     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-#             #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-#             #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-#             #y es muy posible que la conexión falle por lo cual debemos responder que paso
-#             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-#             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-#             #un error, en este caso el error esta contenido en HTTPException
     
 @router.delete("/{uuid_user}")
 def delete_user(uuid_user: str):
