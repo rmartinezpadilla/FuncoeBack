@@ -1,7 +1,6 @@
 from config.db import Base
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, DateTime, Boolean
 from sqlalchemy.sql import func
-from datetime import datetime
 
 class User(Base): #modelo de asesor que representa la tabla en la base de datos
     #es necesaria para que la herramienta sqlalchemy pueda conocer las tablas
@@ -13,6 +12,7 @@ class User(Base): #modelo de asesor que representa la tabla en la base de datos
     rol_uuid = Column(String(255), index=True)
     user = Column(String(255), nullable=False)
     password = Column(String(255), nullable=False)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     last_connection = Column(DateTime)
