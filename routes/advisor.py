@@ -112,7 +112,7 @@ async def get_advisor_identification_card(number_document: int):
             #un error, en este caso el error esta contenido en HTTPException
 
 @router.patch("/update/{uuid_advisor}", response_model = adv_schema_response)
-async def update_hero(adv_uuid: str, advisor_model_2: adv_schema_create):
+async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_create):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
