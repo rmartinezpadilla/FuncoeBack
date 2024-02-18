@@ -6,7 +6,7 @@ from auth.auth_bearer import JWTBearer
 
 router =  APIRouter(prefix='/document_type', tags=['Documents Types'], responses={404 : {'message' : 'Not found'}})
 
-@router.get("/", response_model = list[doc_type_schema])
+@router.get("/all", response_model = list[doc_type_schema])
 async def get_documents_types():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
