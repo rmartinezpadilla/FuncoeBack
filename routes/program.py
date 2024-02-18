@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.program import Program as program_schema
+from schemas.program import Program_response as program_schema_response
 from config.db import get_db,Session
 from models.program import Program as program_models
 from auth.auth_bearer import JWTBearer
@@ -7,7 +8,7 @@ from auth.auth_bearer import JWTBearer
 router =  APIRouter(prefix='/programs', dependencies=[Depends(JWTBearer())], tags=['Programs'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/")
+@router.post("/", response_model=program_schema_response)
 def create_program(program_obj:program_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -34,7 +35,7 @@ def create_program(program_obj:program_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[program_schema])
+@router.get("/all", response_model = list[program_schema_response])
 def get_programs():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -55,7 +56,7 @@ def get_programs():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_program}", response_model = program_schema)
+@router.get("/{uuid_program}", response_model = program_schema_response)
 def read_program(uuid_program: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

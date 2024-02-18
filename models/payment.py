@@ -10,5 +10,5 @@ class Payment(Base): #modelo de pagos que representa la tabla en la base de dato
     enroll_uuid = Column(String(255), nullable=False, index=True)
     concept_uuid = Column(String(255), nullable=False, index=True)
     amount = Column(Float, nullable=False)       
-    created_at = Column(DateTime, nullable=False)    
-    updated_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.now, nullable=False)
+    updated_at = Column(DateTime)

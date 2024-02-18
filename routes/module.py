@@ -5,6 +5,7 @@ from config.db import get_db,Session
 from models.module import Module as module_model
 from datetime import datetime
 from auth.auth_bearer import JWTBearer
+from uuid import uuid4
 
 router =  APIRouter(prefix='/modules', dependencies=[Depends(JWTBearer())], tags=['Modules'], responses={404 : {'message' : 'Not found'}})
 

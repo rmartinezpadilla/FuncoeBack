@@ -24,4 +24,4 @@ class Student(Base): #modelo de estudiante que representa la tabla en la base de
     working_day = Column(String(255), nullable=False, index=True)
     registration_number = Column(Integer, nullable=False)
     advisor_uuid = Column(String(255), nullable=False, index=True)
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    updated_at = Column(DateTime)
