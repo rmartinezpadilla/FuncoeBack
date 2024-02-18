@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from routes import advisor, blood_type, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
-
+from routes import advisor, blood_type, day, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
+import uvicorn
 
 app = FastAPI()
 
@@ -19,7 +19,11 @@ app.include_router(shifts.router)
 app.include_router(role.router)
 app.include_router(blood_type.router)
 app.include_router(user.router)
+app.include_router(day.router)
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1",port=8000, reload= True, log_level="info")
