@@ -7,11 +7,11 @@ import uuid
 from datetime import datetime
 from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/advisors', tags=['Advisors'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/advisors', dependencies=[Depends(JWTBearer())], tags=['Advisors'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/", dependencies=[Depends(JWTBearer())])
-def create_advisor(advisor_obj:adv_schema_create):
+@router.post("/", response_model= adv_schema_response)
+async def create_advisor(advisor_obj:adv_schema_create):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -39,8 +39,8 @@ def create_advisor(advisor_obj:adv_schema_create):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", dependencies=[Depends(JWTBearer())], response_model = list[adv_schema_response])
-def get_advisors():
+@router.get("/all", response_model=list[adv_schema_response])
+async def get_advisors():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -60,8 +60,8 @@ def get_advisors():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{id}", dependencies=[Depends(JWTBearer())], response_model = adv_schema_response)
-def read_advisor(uuid: str):
+@router.get("/{id}", response_model = adv_schema_response)
+async def read_advisor(uuid: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -85,8 +85,8 @@ def read_advisor(uuid: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-@router.get("/", dependencies=[Depends(JWTBearer())], response_model = adv_schema_response)
-def get_advisor_identification_card(number_document: int):
+@router.get("/", response_model = adv_schema_response)
+async def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
             session = get_db()
@@ -111,8 +111,43 @@ def get_advisor_identification_card(number_document: int):
             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
             #un error, en este caso el error esta contenido en HTTPException
 
-@router.delete("/{id}", dependencies=[Depends(JWTBearer())])
-def delete_advisor(id: str):
+@router.patch("/update/{uuid_advisor}", response_model = adv_schema_response)
+async def update_hero(adv_uuid: str, advisor_model_2: adv_schema_create):
+    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+    #¡inicio try!
+        session = get_db()
+        db:Session
+        for db in session:
+            #session.query(advisor_model).filter(adv_models.uuid_advisor == advisor_uuid).update(advisor_model)
+            #db.execute(adv_models).update().values(advisor_model_2)).where(adv_models.uuid_advisor == adv_uuid)
+            advisor_model_2 = adv_models(**advisor_model_2.model_dump())
+            r = db.query(adv_models).where(adv_models.uuid_advisor == adv_uuid).first()        
+            if r is not None:
+                r.document_type_uuid = advisor_model_2.document_type_uuid
+                r.identification_card = advisor_model_2.document_type_uuid
+                r.first_name = advisor_model_2.first_name
+                r.last_name = advisor_model_2.last_name
+                r.phone = advisor_model_2.phone
+                r.email = advisor_model_2.email
+                r.blood_type = advisor_model_2.blood_type
+                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+                db.commit()
+                db.refresh(r)
+                return r
+            else:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='el id del asesor no')
+
+    #¡fin try!
+    except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
+        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
+        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
+        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
+        #un error, en este caso el error esta contenido en HTTPException
+    
+@router.delete("/{id}")
+async def delete_advisor(id: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except

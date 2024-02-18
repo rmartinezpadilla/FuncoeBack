@@ -13,10 +13,6 @@ class Advisor(BaseModel):
     phone:str
     email:EmailStr
     blood_type:str
-    # created_at:datetime
-    # updated_at:datetime
-    #created_at:Optional[datetime] = None
-    #updated_at:Optional[datetime] = None
     
 class Advisor_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
@@ -30,9 +26,7 @@ class Advisor_response(BaseModel):
     email:str
     blood_type:str
     created_at:datetime
-    updated_at:Optional[datetime] = None
-    #created_at:Optional[datetime] = None
-    #updated_at:Optional[datetime] = None
+    updated_at:Optional[datetime] = None    
 
 #class Advisor_request(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
