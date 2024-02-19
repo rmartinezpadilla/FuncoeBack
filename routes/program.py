@@ -4,6 +4,8 @@ from schemas.program import Program_response as program_schema_response
 from config.db import get_db,Session
 from models.program import Program as program_models
 from auth.auth_bearer import JWTBearer
+from datetime import datetime
+import uuid
 
 router =  APIRouter(prefix='/programs', dependencies=[Depends(JWTBearer())], tags=['Programs'], responses={404 : {'message' : 'Not found'}})
 
@@ -19,6 +21,8 @@ def create_program(program_obj:program_schema):
             # print(type('esto es', program_obj))           
             program_obj = program_models(**program_obj.model_dump())            
             #añade el recurso persona para subirse a la base de datos
+            program_obj.uuid_program = uuid.uuid4()
+            program_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
             db.add(program_obj)
             #se sube a la base de datos
             db.commit()
