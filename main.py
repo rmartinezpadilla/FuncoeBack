@@ -3,7 +3,7 @@ from routes import advisor, blood_type, day, document_type, concept, program, st
 import uvicorn
 
 app = FastAPI()
-
+app.include_router(user.router)
 app.include_router(advisor.router)
 app.include_router(document_type.router)
 app.include_router(concept.router)
@@ -18,7 +18,6 @@ app.include_router(pensum.router)
 app.include_router(shifts.router)
 app.include_router(role.router)
 app.include_router(blood_type.router)
-app.include_router(user.router)
 app.include_router(day.router)
 
 @app.get("/")

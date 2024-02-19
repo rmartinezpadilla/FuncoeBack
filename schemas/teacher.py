@@ -22,15 +22,14 @@ class Teacher_response(BaseModel):
     #en este caso lo utilizaremos para crear un profesor
     uuid_teacher:str
     document_type_uuid:str
-    identification_card:str    
+    identification_card:str
     first_name:str
     last_name:str
     blood_type:str
-    phone:str    
+    phone:str
     user:str
     password:str
     created_at:datetime
-    last_connection:datetime
+    last_connection:Optional[datetime] = None
     program_uuid:str    
-    updated_at:datetime
-    created_at:datetime
+    updated_at:Optional[datetime] = None    

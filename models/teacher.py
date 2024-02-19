@@ -17,4 +17,4 @@ class Teacher(Base): #modelo de estudiante que representa la tabla en la base de
     created_at = Column(DateTime, default=datetime.now, nullable=False)
     last_connection = Column(DateTime, default=datetime.now, nullable=False)
     program_uuid = Column(String(255), nullable=False, index=True)
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    updated_at = Column(DateTime)

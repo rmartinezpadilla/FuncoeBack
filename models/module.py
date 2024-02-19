@@ -10,5 +10,5 @@ class Module(Base): #modelo de asesor que representa la tabla en la base de dato
     name = Column(String(255),nullable=False, unique=True)
     program_uuid = Column(String(255), nullable=False, index=True)    
     semester_uuid = Column(String(255),nullable=False)    
-    created_at = Column(DateTime)    
+    created_at = Column(DateTime, default=datetime.now, nullable=False)    
     updated_at = Column(DateTime)

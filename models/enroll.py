@@ -17,4 +17,5 @@ class Enroll(Base): #modelo de matricula que representa la tabla en la base de d
     number_of_installments = Column(Integer, nullable=False)
     installment_value = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.now, nullable=False)
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    updated_at = Column(DateTime)
+    #updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
