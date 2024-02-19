@@ -21,7 +21,7 @@ async def create_advisor(advisor_obj:adv_schema_create):
             # print(type('esto es', advisor_obj))           
             advisor_obj = adv_models(**advisor_obj.model_dump())  
             advisor_obj.uuid_advisor = uuid.uuid4()
-            advisor_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')          
+            advisor_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
             #añade el recurso persona para subirse a la base de datos
             db.add(advisor_obj)
             #se sube a la base de datos
