@@ -9,7 +9,7 @@ from auth.auth_bearer import JWTBearer
 
 router =  APIRouter(prefix='/advisors', dependencies=[Depends(JWTBearer())], tags=['Advisors'], responses={404 : {'message' : 'Not found'}})
 
-
+#haciendo un comentario
 @router.post("/", response_model= adv_schema_response)
 async def create_advisor(advisor_obj:adv_schema_create):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar

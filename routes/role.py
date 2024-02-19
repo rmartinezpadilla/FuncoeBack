@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.role import Role as role_schema
+from schemas.role import Role_response as role_schema_response
 from config.db import get_db,Session
 from models.role import Role as role_model
 import uuid
@@ -9,7 +10,7 @@ from auth.auth_bearer import JWTBearer
 router =  APIRouter(prefix='/roles', dependencies=[Depends(JWTBearer())], tags=['Roles'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/")
+@router.post("/", response_model=role_schema_response)
 def create_role(role_obj:role_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -38,7 +39,7 @@ def create_role(role_obj:role_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[role_schema])
+@router.get("/", response_model = list[role_schema_response])
 def get_shifts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -59,7 +60,7 @@ def get_shifts():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_role}", response_model = role_schema)
+@router.get("/{uuid_role}", response_model = role_schema_response)
 def read_role(uuid_role: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
