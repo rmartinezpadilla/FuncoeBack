@@ -12,7 +12,11 @@ class Role(BaseModel):
     #created_at:Optional[datetime] = None
     #updated_at:Optional[datetime] = None
     
-
+class Role_response(BaseModel):
+    #modelo de pydantic que sirve para recibir los datos de entrada de la api
+    #en este caso lo utilizaremos para crear una persona
+    uuid_rol:str
+    name_rol :str
 #class Advisor_request(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso la utilizaremos para buscar una persona por usuario y contraseña
