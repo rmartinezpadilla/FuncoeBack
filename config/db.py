@@ -4,7 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from typing import Generator
 
 #mysql_url = "mysql+pymysql://funcoe:0iqloWxRu0uyB7zj@localhost:3306/db_funcoe_dev" #ruta de conexión
-mysql_url = "mysql+pymysql://funcoe:0iqloWxRu0uyB7zj@localhost:3306/funcoe_db_dev" #ruta de conexión
+#mysql_url = "mysql+pymysql://funcoe:0iqloWxRu0uyB7zj@localhost:3306/funcoe_db_dev" #ruta de conexión
+mysql_url = "mysql+pymysql://uu5tkjorhxgn304h:hjXXC1laaLrhy4cwsyUU@bgfsihaszjqebrpyljyi-mysql.services.clever-cloud.com:3306/bgfsihaszjqebrpyljyi" #ruta de conexión
 engine = create_engine(mysql_url, echo=True)#creación de la conexión a la base de datos
 Session = sessionmaker(bind=engine) #creación del generador de la sesión a la base de datos
 Base = declarative_base() #base que se utilizará en los modelos sqlalchemy para que
