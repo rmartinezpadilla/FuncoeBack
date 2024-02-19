@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.concept import Concept as concept_schema
+from schemas.concept import Concept_response as concept_schema_response
 from config.db import get_db,Session
 from models.concept import Concept as concept_models
+from auth.auth_bearer import JWTBearer
 import uuid
+from datetime import datetime
 
-router =  APIRouter(prefix='/concepts', tags=['Concepts'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/concepts', dependencies=[Depends(JWTBearer())], tags=['Concepts'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/")
+@router.post("/", response_model=concept_schema_response)
 def create_concept(concept_obj:concept_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -18,6 +21,8 @@ def create_concept(concept_obj:concept_schema):
             # print(type('esto es', concept_obj))           
             concept_obj = concept_models(**concept_obj.model_dump())            
             #añade el recurso persona para subirse a la base de datos
+            concept_obj.uuid_concept = uuid.uuid4()
+            concept_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
             db.add(concept_obj)
             #se sube a la base de datos
             db.commit()
@@ -34,7 +39,7 @@ def create_concept(concept_obj:concept_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[concept_schema])
+@router.get("/all",response_model = list[concept_schema_response])
 def get_concepts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -55,7 +60,7 @@ def get_concepts():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_concept}", response_model = concept_schema)
+@router.get("/{uuid_concept}", response_model = concept_schema_response)
 def read_concept(uuid_concept: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

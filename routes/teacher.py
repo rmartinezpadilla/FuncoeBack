@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.teacher import Teacher as teacher_schema
 from config.db import get_db,Session
 from models.teacher import Teacher as teacher_models
-import uuid
+from auth.auth_bearer import JWTBearer
 
-router =  APIRouter(prefix='/teachers', tags=['Teachers'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/teachers', dependencies=[Depends(JWTBearer())], tags=['Teachers'], responses={404 : {'message' : 'Not found'}})
 
 
 @router.post("/")

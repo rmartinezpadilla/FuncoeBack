@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Response, HTTPException, status
+from fastapi import APIRouter, Response, HTTPException, status, Depends
 from schemas.program import Program as program_schema
+from schemas.program import Program_response as program_schema_response
 from config.db import get_db,Session
 from models.program import Program as program_models
+from auth.auth_bearer import JWTBearer
+from datetime import datetime
 import uuid
 
-router =  APIRouter(prefix='/programs', tags=['Programs'], responses={404 : {'message' : 'Not found'}})
+router =  APIRouter(prefix='/programs', dependencies=[Depends(JWTBearer())], tags=['Programs'], responses={404 : {'message' : 'Not found'}})
 
 
-@router.post("/")
+@router.post("/", response_model=program_schema_response)
 def create_program(program_obj:program_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -18,6 +21,8 @@ def create_program(program_obj:program_schema):
             # print(type('esto es', program_obj))           
             program_obj = program_models(**program_obj.model_dump())            
             #añade el recurso persona para subirse a la base de datos
+            program_obj.uuid_program = uuid.uuid4()
+            program_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
             db.add(program_obj)
             #se sube a la base de datos
             db.commit()
@@ -34,7 +39,7 @@ def create_program(program_obj:program_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[program_schema])
+@router.get("/all", response_model = list[program_schema_response])
 def get_programs():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -55,7 +60,7 @@ def get_programs():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_program}", response_model = program_schema)
+@router.get("/{uuid_program}", response_model = program_schema_response)
 def read_program(uuid_program: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
