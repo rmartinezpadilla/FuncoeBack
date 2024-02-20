@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import advisor, blood_type, day, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
+from app.routes import advisor, blood_type, day, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
 import uvicorn
 
 app = FastAPI()
