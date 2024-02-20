@@ -10,7 +10,6 @@ from decouple import config
 JWT_SECRET = "use your secret code with secrets.token_hex(10)"
 JWT_ALGORITHM = "HS256"
 
-
 def token_response(token: str):
     return {
         "access_token": token
@@ -20,7 +19,7 @@ def token_response(token: str):
 def signJWT(user_id: str) -> Dict[str, str]:
     payload = {
         "user_id": user_id,
-        "expires": time.time() + 1000
+        "expires": time.time() + 10000
     }
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
