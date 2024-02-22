@@ -14,6 +14,18 @@ class Advisor(BaseModel):
     email:EmailStr
     blood_type:str
     
+class Advisor_update(BaseModel):
+    #modelo de pydantic que sirve para recibir los datos de entrada de la api
+    #en este caso lo utilizaremos para crear una persona
+    #uuid_advisor:Optional[str] = None
+    document_type_uuid:Optional[str] = ""
+    identification_card:Optional[str] = ""
+    first_name:Optional[str] = ""
+    last_name:Optional[str] = ""
+    phone:Optional[str] = ""
+    email:Optional[EmailStr] = ""
+    blood_type:Optional[str]=""
+
 class Advisor_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear una persona

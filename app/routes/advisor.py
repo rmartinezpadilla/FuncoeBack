@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
 from app.schemas.advisor import Advisor_response as adv_schema_response
 from app.schemas.advisor import Advisor as adv_schema_create
+from app.schemas.advisor import Advisor_update as adv_schema_update
 from app.config.db import get_db,Session
 from app.models.advisor import Advisor as adv_models
+from app.routes.document_type import check_uuid_document_type
+from app.routes.blood_type import check_uuid_blood_type
 import uuid
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
@@ -18,18 +21,25 @@ async def create_advisor(advisor_obj:adv_schema_create):
         db:Session
         for db in session:
             #advisor_obj["id"] = uuid.uuid4() 
-            # print(type('esto es', advisor_obj))           
-            advisor_obj = adv_models(**advisor_obj.model_dump())  
-            advisor_obj.uuid_advisor = uuid.uuid4()
-            advisor_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-            #añade el recurso persona para subirse a la base de datos
-            db.add(advisor_obj)
-            #se sube a la base de datos
-            db.commit()
-            #se refresca la información en la variable persona para poderla devolver
-            #en el servicio
-            db.refresh(advisor_obj)
-            return advisor_obj
+            # print(type('esto es', advisor_obj))
+            if not check_uuid_document_type(advisor_obj.document_type_uuid):
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.document_type_uuid} document_type not exist')
+            if check_identification_card(advisor_obj.identification_card):
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.identification_card} identification card exist')
+            elif not check_uuid_blood_type(advisor_obj.blood_type):
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.blood_type} blood_type not exist')
+            else:
+                advisor_obj = adv_models(**advisor_obj.model_dump())  
+                advisor_obj.uuid_advisor = uuid.uuid4()
+                advisor_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+                #añade el recurso persona para subirse a la base de datos
+                db.add(advisor_obj)
+                #se sube a la base de datos
+                db.commit()
+                #se refresca la información en la variable persona para poderla devolver
+                #en el servicio
+                db.refresh(advisor_obj)
+                return advisor_obj
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
         #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -111,8 +121,8 @@ async def get_advisor_identification_card(number_document: int):
             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
             #un error, en este caso el error esta contenido en HTTPException
 
-@router.patch("/update/{uuid_advisor}", response_model = adv_schema_response)
-async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_create):
+@router.patch("/update", response_model = adv_schema_response)
+async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -174,3 +184,22 @@ async def delete_advisor(id: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException            }
+    
+
+    """
+    ADVISOR FUNCTIONS
+    
+    """
+
+def check_identification_card(identification_card : str):
+    try:
+        session = get_db()
+        db:Session
+        for db in session:
+            r = db.query(adv_models).where(adv_models.identification_card == identification_card).first()
+            if r is None:                
+                return False                
+            else:
+                return True
+    except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))

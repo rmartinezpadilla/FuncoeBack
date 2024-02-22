@@ -47,4 +47,18 @@ def read_blood_type(uuid_blood_type: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
-    
+
+
+def check_uuid_blood_type(uuid_blood_type : str):
+    try:
+        session = get_db()
+        db:Session
+        for db in session:
+            r = db.query(blood_type_model).where(blood_type_model.uuid_blood_type == uuid_blood_type).first()
+            if r is None:                
+                return False                
+            else:
+                return True
+             
+    except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))

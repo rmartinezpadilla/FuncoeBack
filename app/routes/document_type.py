@@ -69,4 +69,18 @@ async def read_document_type_for_name(name: str):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
             #un error, en este caso el error esta contenido en HTTPException
-    
+
+def check_uuid_document_type(uuid_document_type : str):
+    try:
+        session = get_db()
+        db:Session
+        for db in session:
+            r = db.query(doc_type_models).where(doc_type_models.uuid_document_type == uuid_document_type).first()
+            if r is None:                
+                return False                
+            else:
+                return True
+             
+    except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+            
