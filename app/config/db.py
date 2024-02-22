@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from typing import Generator
 
+#esto es un comentario para ver si no sube
 #mysql_url = "mysql+pymysql://funcoe:0iqloWxRu0uyB7zj@localhost:3306/db_funcoe_dev" #ruta de conexión
 mysql_url = "mysql+pymysql://funcoe:0iqloWxRu0uyB7zj@localhost:3306/funcoe_db_dev" #ruta de conexión
 engine = create_engine(mysql_url, echo=True)#creación de la conexión a la base de datos
