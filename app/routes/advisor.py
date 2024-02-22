@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
+from sqlalchemy import desc
 from app.schemas.advisor import Advisor_response as adv_schema_response
 from app.schemas.advisor import Advisor as adv_schema_create
 from app.schemas.advisor import Advisor_update as adv_schema_update
@@ -59,7 +60,7 @@ async def get_advisors():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(adv_models)           
+            r=db.query(adv_models).order_by(adv_models.created_at)          
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
