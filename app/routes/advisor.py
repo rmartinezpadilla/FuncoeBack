@@ -134,7 +134,7 @@ async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
             r = db.query(adv_models).where(adv_models.uuid_advisor == adv_uuid).first()        
             if r is not None:
                 r.document_type_uuid = advisor_model_2.document_type_uuid
-                r.identification_card = advisor_model_2.document_type_uuid
+                r.identification_card = advisor_model_2.identification_card
                 r.first_name = advisor_model_2.first_name
                 r.last_name = advisor_model_2.last_name
                 r.phone = advisor_model_2.phone
