@@ -8,7 +8,7 @@ __pycache__/
 *$py.class
 
 #ignorando database
-.app/config/db.py
+app/config/db.py
 # C extensions
 *.so
 
