@@ -177,6 +177,38 @@ async def desactivate_status_user(user_uuid: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
+
+@router.patch("/update", response_model = user_schema_response)
+async def update_user(user_uuid: str, user_model_2: user_schema_login):
+    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+    #¡inicio try!
+        session = get_db()
+        db:Session
+        for db in session:
+            #session.query(advisor_model).filter(adv_models.uuid_advisor == advisor_uuid).update(advisor_model)
+            #db.execute(adv_models).update().values(user_model_2)).where(adv_models.uuid_advisor == adv_uuid)
+            user_model_2 = user_model(**user_model_2.model_dump())
+            r = db.query(user_model).where(user_model.uuid_user == user_uuid).first()        
+            if r is not None:                                
+                r.user = user_model_2.user
+                r.password = user_funcitons.encrypt_password(user_model_2.password)
+                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+                db.commit()
+                db.refresh(r)
+                return r
+            else:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id user not exist!')
+
+    #¡fin try!
+    except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
+        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
+        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
+        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
+        #un error, en este caso el error esta contenido en HTTPException
+
+
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_user(uuid_user: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
