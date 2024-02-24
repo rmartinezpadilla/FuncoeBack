@@ -146,7 +146,7 @@ async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
                 db.refresh(r)
                 return r
             else:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='el id del asesor no')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id advisor not exist!')
 
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
