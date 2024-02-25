@@ -7,6 +7,7 @@ from app.config.db import get_db,Session
 from app.models.advisor import Advisor as adv_models
 from app.routes.document_type import check_uuid_document_type
 from app.routes.blood_type import check_uuid_blood_type
+from app.utils.func.advisor import check_identification_card
 import uuid
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
@@ -24,11 +25,11 @@ async def create_advisor(advisor_obj:adv_schema_create):
             #advisor_obj["id"] = uuid.uuid4() 
             # print(type('esto es', advisor_obj))
             if not check_uuid_document_type(advisor_obj.document_type_uuid):
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.document_type_uuid} document_type not exist')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {advisor_obj.document_type_uuid} document_type not exist')
             if check_identification_card(advisor_obj.identification_card):
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.identification_card} identification card exist')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {advisor_obj.identification_card} identification card exist')
             elif not check_uuid_blood_type(advisor_obj.blood_type):
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.blood_type} blood_type not exist')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {advisor_obj.blood_type} blood_type not exist')
             else:
                 advisor_obj = adv_models(**advisor_obj.model_dump())  
                 advisor_obj.uuid_advisor = uuid.uuid4()
@@ -201,15 +202,4 @@ async def delete_advisor(id: str):
     
     """
 
-def check_identification_card(identification_card : str):
-    try:
-        session = get_db()
-        db:Session
-        for db in session:
-            r = db.query(adv_models).where(adv_models.identification_card == identification_card).first()
-            if r is None:                
-                return False                
-            else:
-                return True
-    except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+
