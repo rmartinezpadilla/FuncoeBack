@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import advisor, blood_type, day, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
+from app.routes import advisor, blood_type, gender, day, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
 import uvicorn
 
 app = FastAPI()
@@ -19,6 +19,7 @@ app.include_router(shifts.router)
 app.include_router(role.router)
 app.include_router(blood_type.router)
 app.include_router(day.router)
+app.include_router(gender.router)
 
 @app.get("/")
 async def root():

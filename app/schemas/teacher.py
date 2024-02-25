@@ -5,17 +5,16 @@ from datetime import datetime, date
 class Teacher(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear un profesor
-    #uuid_teacher:Optional[str] = None
     document_type_uuid:str
     identification_card:str    
     first_name:str
     last_name:str
-    blood_type:str
+    blood_type_uuid:str
+    gender_uuid:str
     phone:str    
     user:str
     password:str    
-    program_uuid:str    
-    
+    program_uuid:str        
 
 class Teacher_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
@@ -25,7 +24,8 @@ class Teacher_response(BaseModel):
     identification_card:str
     first_name:str
     last_name:str
-    blood_type:str
+    blood_type_uuid:str
+    gender_uuid:str
     phone:str
     user:str
     password:str

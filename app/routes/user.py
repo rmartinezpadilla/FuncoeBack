@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
+from sqlalchemy import desc
 from app.schemas.user import User as user_schema
 from app.schemas.user import User_response as user_schema_response
 from app.schemas.user import User_login as user_schema_login
@@ -59,7 +60,7 @@ async def get_users():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(user_model)
+            r=db.query(user_model).order_by(desc(user_model.created_at))
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla

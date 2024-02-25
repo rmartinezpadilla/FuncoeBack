@@ -12,6 +12,6 @@ class User(Base): #modelo de asesor que representa la tabla en la base de datos
     rol_uuid = Column(String(255), index=True)
     is_active = Column(Boolean, default=True)
     last_connection = Column(DateTime)
-    created_at = Column(DateTime, default=datetime.now, nullable=False)
+    created_at = Column(DateTime)
     updated_at = Column(DateTime)
     
