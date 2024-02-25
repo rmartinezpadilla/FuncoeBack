@@ -96,7 +96,6 @@ def read_teacher_identification_card(number_card: str):
     except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
-
 @router.patch("/update", response_model = teacher_schema_response)
 def update_teacher(teacher_uuid: str, teach_model_2: Teacher_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
