@@ -9,7 +9,7 @@ from datetime import datetime
 router =  APIRouter(prefix='/students', dependencies=[Depends(JWTBearer())], tags=['Students'], responses={404 : {'message' : 'Not found'}})
 
 @router.post("/")
-async def create_student(student_obj : student_schema):
+def create_student(student_obj : student_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -36,7 +36,7 @@ async def create_student(student_obj : student_schema):
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/allStudents/", response_model = list[student_schema])
-async def get_students():
+def get_students():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -57,7 +57,7 @@ async def get_students():
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{uuid_student}", response_model = student_schema)
-async def read_student(uuid_student: str):
+def read_student(uuid_student: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -78,7 +78,7 @@ async def read_student(uuid_student: str):
         #un error, en este caso el error esta contenido en HTTPException
     
 @router.get("/", response_model = student_schema)
-async def get_advisor_identification_card(number_document: int):
+def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
             session = get_db()
@@ -104,7 +104,7 @@ async def get_advisor_identification_card(number_document: int):
             #un error, en este caso el error esta contenido en HTTPException
     
 @router.delete("/{uuid_student}")
-async def delete_student(uuid_student: str):
+def delete_student(uuid_student: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except

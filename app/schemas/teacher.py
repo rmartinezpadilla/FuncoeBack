@@ -16,6 +16,14 @@ class Teacher(BaseModel):
     password:str    
     program_uuid:str        
 
+class Teacher_update(BaseModel):
+    #modelo de pydantic que sirve para recibir los datos de entrada de la api
+    #en este caso lo utilizaremos para crear un profesor        
+    first_name:str
+    last_name:str    
+    phone:str    
+    program_uuid:Optional[str] = None
+
 class Teacher_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear un profesor

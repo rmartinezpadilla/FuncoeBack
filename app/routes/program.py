@@ -35,7 +35,7 @@ async def create_program(program_obj:program_schema):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.get("/all/", response_model = list[program_schema_response])
-async def get_programs():
+def get_programs():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -48,7 +48,7 @@ async def get_programs():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.get("/{uuid_program}", response_model = program_schema_response)
-async def read_program(uuid_program: str):
+def read_program(uuid_program: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -64,7 +64,7 @@ async def read_program(uuid_program: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.patch("/", response_model = program_schema_response)
-async def update_program(program_uuid: str, program_model_2: program_schema):
+def update_program(program_uuid: str, program_model_2: program_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -86,7 +86,7 @@ async def update_program(program_uuid: str, program_model_2: program_schema):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.delete("/{uuid_program}")
-async def delete_program(uuid_program: str):
+def delete_program(uuid_program: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except
