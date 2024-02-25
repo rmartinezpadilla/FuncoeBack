@@ -3,27 +3,29 @@ from app.schemas.student import Student as student_schema
 from app.config.db import get_db,Session
 from app.models.student import Student as student_models
 from app.auth.auth_bearer import JWTBearer
+import uuid
+from datetime import datetime
 
 router =  APIRouter(prefix='/students', dependencies=[Depends(JWTBearer())], tags=['Students'], responses={404 : {'message' : 'Not found'}})
 
 @router.post("/")
-async def create_student(advisor_obj:student_schema):
+async def create_student(student_obj : student_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
         for db in session:
-            #advisor_obj["id"] = uuid.uuid4() 
-            # print(type('esto es', advisor_obj))           
-            advisor_obj = student_models(**advisor_obj.model_dump())            
+            student_obj = student_models(**student_obj.model_dump())            
             #añade el recurso persona para subirse a la base de datos
-            db.add(advisor_obj)
+            student_obj.uuid_student = uuid.uuid4()
+            student_obj.created_at =  datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+            db.add(student_obj)
             #se sube a la base de datos
             db.commit()
             #se refresca la información en la variable persona para poderla devolver
             #en el servicio
-            db.refresh(advisor_obj)
-            return advisor_obj
+            db.refresh(student_obj)
+            return student_obj
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
         #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -33,7 +35,7 @@ async def create_student(advisor_obj:student_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/allStudents", response_model = list[student_schema])
+@router.get("/allStudents/", response_model = list[student_schema])
 async def get_students():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

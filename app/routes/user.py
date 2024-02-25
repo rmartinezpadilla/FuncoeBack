@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
+from sqlalchemy import desc
 from app.schemas.user import User as user_schema
 from app.schemas.user import User_response as user_schema_response
 from app.schemas.user import User_login as user_schema_login
@@ -12,7 +13,7 @@ from datetime import datetime
 
 router =  APIRouter(prefix='/users', tags=['Users'], responses={404 : {'message' : 'Not found'}})
 
-@router.post("/token")
+@router.post("/token/")
 async def get_token(user: user_schema_login):
     if user_funcitons.validate_user(user):
         return signJWT(user.user)
@@ -49,7 +50,7 @@ async def create_user(user_obj:user_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
+@router.get("/all/", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
 async def get_users():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -59,7 +60,7 @@ async def get_users():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(user_model)
+            r=db.query(user_model).order_by(desc(user_model.created_at))
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -70,7 +71,7 @@ async def get_users():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/actives", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
+@router.get("/actives/", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
 async def get_users_actives():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -91,7 +92,7 @@ async def get_users_actives():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/inactives", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
+@router.get("/inactives/", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
 async def get_users_inactives():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -112,7 +113,7 @@ async def get_users_inactives():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{uuid_user}", dependencies=[Depends(JWTBearer())], response_model = user_schema_response)
+@router.get("/{uuid_user}/", dependencies=[Depends(JWTBearer())], response_model = user_schema_response)
 async def read_user(uuid_user: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -133,8 +134,8 @@ async def read_user(uuid_user: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.patch("/activate_user", dependencies=[Depends(JWTBearer())], response_model = user_schema_response)
-async def activate_status_user(user_uuid: str):
+@router.patch("/activate/", dependencies=[Depends(JWTBearer())], response_model = user_schema_response)
+async def activate_user(user_uuid: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -155,8 +156,8 @@ async def activate_status_user(user_uuid: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))        
 
-@router.patch("/desactivate_user", dependencies=[Depends(JWTBearer())], response_model = user_schema_response)
-async def desactivate_status_user(user_uuid: str):
+@router.patch("/deactivate/", dependencies=[Depends(JWTBearer())], response_model = user_schema_response)
+async def deactivate_user(user_uuid: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -177,8 +178,7 @@ async def desactivate_status_user(user_uuid: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-
-@router.patch("/update", response_model = user_schema_response)
+@router.patch("/update/", response_model = user_schema_response)
 async def update_user(user_uuid: str, user_model_2: user_schema_login):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -202,7 +202,7 @@ async def update_user(user_uuid: str, user_model_2: user_schema_login):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))        
 
 
-@router.delete("/delete", dependencies=[Depends(JWTBearer())])
+@router.delete("/delete/", dependencies=[Depends(JWTBearer())])
 async def delete_user(uuid_user: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

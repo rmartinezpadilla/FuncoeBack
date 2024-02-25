@@ -7,6 +7,7 @@ from app.config.db import get_db,Session
 from app.models.advisor import Advisor as adv_models
 from app.routes.document_type import check_uuid_document_type
 from app.routes.blood_type import check_uuid_blood_type
+from app.utils.func.advisor import check_identification_card
 import uuid
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
@@ -24,11 +25,11 @@ async def create_advisor(advisor_obj:adv_schema_create):
             #advisor_obj["id"] = uuid.uuid4() 
             # print(type('esto es', advisor_obj))
             if not check_uuid_document_type(advisor_obj.document_type_uuid):
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.document_type_uuid} document_type not exist')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {advisor_obj.document_type_uuid} document_type not exist')
             if check_identification_card(advisor_obj.identification_card):
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.identification_card} identification card exist')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {advisor_obj.identification_card} identification card exist')
             elif not check_uuid_blood_type(advisor_obj.blood_type):
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'uuid {advisor_obj.blood_type} blood_type not exist')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {advisor_obj.blood_type} blood_type not exist')
             else:
                 advisor_obj = adv_models(**advisor_obj.model_dump())  
                 advisor_obj.uuid_advisor = uuid.uuid4()
@@ -42,15 +43,12 @@ async def create_advisor(advisor_obj:adv_schema_create):
                 db.refresh(advisor_obj)
                 return advisor_obj
     #¡fin try!
-    except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", response_model=list[adv_schema_response])
+@router.get("/all/", response_model=list[adv_schema_response])
 async def get_advisors():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -60,7 +58,7 @@ async def get_advisors():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(adv_models).order_by(adv_models.created_at)          
+            r=db.query(adv_models).order_by(desc(adv_models.created_at))
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -71,31 +69,40 @@ async def get_advisors():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{id}", response_model = adv_schema_response)
+@router.get("/{id}/", response_model = adv_schema_response)
 async def read_advisor(uuid: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
-        for db in session:
-            #se usa la instrucción where para buscar por el id y se ejecuta el first para
-            #encontrar la primera coincidencia, esto es posible porque el id es un 
-            #identificador unico
+        for db in session:            
             r=db.query(adv_models).where(adv_models.uuid_advisor == uuid).first()
             if r is not None:               
                 return r
             else:
-                return Response(status_code=status.HTTP_404_NOT_FOUND)
+                raise  HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Advisor not exist!')
             
     #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException
-    
+
+@router.get("/load", response_model = list[adv_schema_response])
+async def load_advisor_for_name(name : str):
+    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+    #¡inicio try!
+        session = get_db()
+        db:Session
+        for db in session:            
+            r=db.query(adv_models).filter(adv_models.first_name.ilike(f'%{name}%')).all()            
+            if r is not None and len(r)>0:                                
+                return r
+            else:
+                raise  HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Advisor not exist!')
+            
+    #¡fin try!
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))    
+
 @router.get("/", response_model = adv_schema_response)
 async def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
@@ -111,7 +118,7 @@ async def get_advisor_identification_card(number_document: int):
                 if r is not None:
                     return r
                 else:
-                    return Response(status_code=status.HTTP_404_NOT_FOUND)
+                    raise  HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Advisor not exist!')
                 
         #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -122,15 +129,13 @@ async def get_advisor_identification_card(number_document: int):
             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
             #un error, en este caso el error esta contenido en HTTPException
 
-@router.patch("/update", response_model = adv_schema_response)
+@router.patch("/update/", response_model = adv_schema_response)
 async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
-        for db in session:
-            #session.query(advisor_model).filter(adv_models.uuid_advisor == advisor_uuid).update(advisor_model)
-            #db.execute(adv_models).update().values(advisor_model_2)).where(adv_models.uuid_advisor == adv_uuid)
+        for db in session:            
             advisor_model_2 = adv_models(**advisor_model_2.model_dump())
             r = db.query(adv_models).where(adv_models.uuid_advisor == adv_uuid).first()        
             if r is not None:
@@ -149,15 +154,10 @@ async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id advisor not exist!')
 
     #¡fin try!
-    except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException
-    
-@router.delete("/{id}")
+        
+@router.delete("/{id}/")
 async def delete_advisor(id: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -165,18 +165,13 @@ async def delete_advisor(id: str):
         session = get_db()
         db:Session
         for db in session:
-            #one or none es una instrucción que nos permite encontrar uno o ningún recurso
-            #en caso que sea un recurso lo añadiremos al delete ya que es el que vamos a borrar
-            #en caso que sea None se lanza un error, ya que no tenemos un dato con el id a borrar
-            #si intentamos borrar algo que no existe (en el caso que sea None) nos lanzará una 
-            #excepción y será atrapada en el except
             r=db.query(adv_models).where(adv_models.uuid_advisor == id).one_or_none()
             if r is not None:
                 db.delete(r)#instruccion para borrar un recurso
                 db.commit()
                 return Response(status_code=status.HTTP_200_OK)
             else:
-                return Response(status_code=status.HTTP_404_NOT_FOUND)
+               raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Id advisor not exist!')
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
         #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -192,15 +187,4 @@ async def delete_advisor(id: str):
     
     """
 
-def check_identification_card(identification_card : str):
-    try:
-        session = get_db()
-        db:Session
-        for db in session:
-            r = db.query(adv_models).where(adv_models.identification_card == identification_card).first()
-            if r is None:                
-                return False                
-            else:
-                return True
-    except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+

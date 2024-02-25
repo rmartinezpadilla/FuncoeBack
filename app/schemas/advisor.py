@@ -10,6 +10,7 @@ class Advisor(BaseModel):
     identification_card:str
     first_name:str
     last_name:str
+    gender_uuid:str
     phone:str
     email:EmailStr
     blood_type:str
@@ -22,6 +23,7 @@ class Advisor_update(BaseModel):
     identification_card:Optional[str] = ""
     first_name:Optional[str] = ""
     last_name:Optional[str] = ""
+    gender_uuid:Optional[str] = ""
     phone:Optional[str] = ""
     email:Optional[EmailStr] = ""
     blood_type:Optional[str]=""
@@ -34,6 +36,7 @@ class Advisor_response(BaseModel):
     identification_card:str
     first_name:str
     last_name:str
+    gender_uuid:str
     phone:str
     email:str
     blood_type:str
