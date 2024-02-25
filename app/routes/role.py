@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
+from sqlalchemy import desc
 from app.schemas.role import Role as role_schema
 from app.schemas.role import Role_response as role_schema_response
 from app.config.db import get_db,Session
@@ -9,9 +10,8 @@ from app.auth.auth_bearer import JWTBearer
 
 router =  APIRouter(prefix='/roles', dependencies=[Depends(JWTBearer())], tags=['Roles'], responses={404 : {'message' : 'Not found'}})
 
-
 @router.post("/", response_model=role_schema_response)
-def create_role(role_obj:role_schema):
+async def create_rol(role_obj:role_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -39,8 +39,8 @@ def create_role(role_obj:role_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[role_schema_response])
-def get_shifts():
+@router.get("/all", response_model = list[role_schema_response])
+def get_rols():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -49,19 +49,14 @@ def get_shifts():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(role_model)
+            r=db.query(role_model).order_by(desc(role_model.created_at))
             return r
     #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{uuid_role}", response_model = role_schema_response)
-def read_role(uuid_role: str):
+async def read_rol(uuid_role: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -82,7 +77,7 @@ def read_role(uuid_role: str):
         #un error, en este caso el error esta contenido en HTTPException
     
 @router.delete("/{uuid_role}")
-def delete_role(uuid_role: str):
+def delete_rol(uuid_role: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except

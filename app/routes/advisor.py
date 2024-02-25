@@ -5,8 +5,8 @@ from app.schemas.advisor import Advisor as adv_schema_create
 from app.schemas.advisor import Advisor_update as adv_schema_update
 from app.config.db import get_db,Session
 from app.models.advisor import Advisor as adv_models
-from app.routes.document_type import check_uuid_document_type
-from app.routes.blood_type import check_uuid_blood_type
+from app.utils.func.document_type import check_uuid_document_type
+from app.utils.func.blood_type import check_uuid_blood_type
 from app.utils.func.advisor import check_identification_card
 import uuid
 from datetime import datetime
@@ -16,7 +16,7 @@ router =  APIRouter(prefix='/advisors', dependencies=[Depends(JWTBearer())], tag
 
 #haciendo un comentario
 @router.post("/", response_model= adv_schema_response)
-async def create_advisor(advisor_obj:adv_schema_create):
+def create_advisor(advisor_obj:adv_schema_create):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -49,7 +49,7 @@ async def create_advisor(advisor_obj:adv_schema_create):
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/all/", response_model=list[adv_schema_response])
-async def get_advisors():
+def get_advisors():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -70,7 +70,7 @@ async def get_advisors():
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{id}/", response_model = adv_schema_response)
-async def read_advisor(uuid: str):
+def read_advisor(uuid: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -87,7 +87,7 @@ async def read_advisor(uuid: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.get("/load", response_model = list[adv_schema_response])
-async def load_advisor_for_name(name : str):
+def load_advisor_for_name(name : str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -104,7 +104,7 @@ async def load_advisor_for_name(name : str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))    
 
 @router.get("/", response_model = adv_schema_response)
-async def get_advisor_identification_card(number_document: int):
+def get_advisor_identification_card(number_document: int):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
             session = get_db()
@@ -130,7 +130,7 @@ async def get_advisor_identification_card(number_document: int):
             #un error, en este caso el error esta contenido en HTTPException
 
 @router.patch("/update/", response_model = adv_schema_response)
-async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
+def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -158,7 +158,7 @@ async def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         
 @router.delete("/{id}/")
-async def delete_advisor(id: str):
+def delete_advisor(id: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except

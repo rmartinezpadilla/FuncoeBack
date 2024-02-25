@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
 from app.schemas.teacher import Teacher as teacher_schema
 from app.schemas.teacher import Teacher_response as teacher_schema_response
-from app.config.db import get_db,Session
+from app.config.db import get_db, Session
 from app.models.teacher import Teacher as teacher_models
 from app.auth.auth_bearer import JWTBearer
 from datetime import datetime
 import uuid
 
 router =  APIRouter(prefix='/teachers', dependencies=[Depends(JWTBearer())], tags=['Teachers'], responses={404 : {'message' : 'Not found'}})
-
 
 @router.post("/", response_model=teacher_schema_response)
 async def create_teacher(teacher_obj:teacher_schema):
@@ -26,7 +25,7 @@ async def create_teacher(teacher_obj:teacher_schema):
             db.commit()
             #se refresca la información en la variable persona para poderla devolver
             #en el servicio
-            db.refresh(teacher_obj)
+            db.refresh(teacher_obj)            
             return teacher_obj
     #¡fin try!
     except Exception as e: #instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
@@ -37,7 +36,7 @@ async def create_teacher(teacher_obj:teacher_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[teacher_schema])
+@router.get("/all", response_model = list[teacher_schema])
 async def get_teachers():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
