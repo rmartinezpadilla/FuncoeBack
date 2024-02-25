@@ -30,7 +30,7 @@ def create_user(user_obj:user_schema):
             for db in session:          
                 user_obj = user_model(**user_obj.model_dump()) 
                 user_obj.uuid_user = uuid.uuid4()                 
-                user_obj.password = user_funcitons.encrypt_password(user_obj.password)                
+                user_obj.password = encrypt_password(user_obj.password)                
                 user_obj.created_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
                 #añade el recurso persona para subirse a la base de datos
                 db.add(user_obj)
