@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from typing import Generator
 
-mysql_url = "mysql+pymysql://unwezotm5mmdyjgt:ge9XlyBz6c2P5XP0tx7S@bharkg0tw96hsuhs5jfo-mysql.services.clever-cloud.com:3306/bharkg0tw96hsuhs5jfo" #ruta de conexión
+mysql_url = "mysql+pymysql://ulgmo3asuq8vpeal:ZrsvU9WKdnqNxf9yybYV@bw71m12l6qgfhiyzopv2-mysql.services.clever-cloud.com:3306/bw71m12l6qgfhiyzopv2" #ruta de conexión
 #mysql_url = "mysql+pymysql://funcoe:0iqloWxRu0uyB7zj@localhost:3306/funcoe_db_dev" #ruta de conexión
 engine = create_engine(mysql_url, echo=True)#creación de la conexión a la base de datos
 Session = sessionmaker(bind=engine) #creación del generador de la sesión a la base de datos
