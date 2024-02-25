@@ -11,7 +11,7 @@ from app.auth.auth_bearer import JWTBearer
 router =  APIRouter(prefix='/roles', dependencies=[Depends(JWTBearer())], tags=['Roles'], responses={404 : {'message' : 'Not found'}})
 
 @router.post("/", response_model=role_schema_response)
-async def create_rol(role_obj:role_schema):
+def create_rol(role_obj:role_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -56,7 +56,7 @@ def get_rols():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.get("/{uuid_role}", response_model = role_schema_response)
-async def read_rol(uuid_role: str):
+def read_rol(uuid_role: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()

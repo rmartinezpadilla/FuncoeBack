@@ -11,7 +11,7 @@ from datetime import datetime
 router =  APIRouter(prefix='/genders', dependencies=[Depends(JWTBearer())], tags=['Genders'], responses={404 : {'message' : 'Not found'}})
 
 @router.post("/", response_model=gender_schema_response)
-async def create_gender(gender_obj:gender_schema):
+def create_gender(gender_obj:gender_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -33,7 +33,7 @@ async def create_gender(gender_obj:gender_schema):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
 @router.get("/all/",response_model = list[gender_schema_response])
-async def get_genders():
+def get_genders():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -49,7 +49,7 @@ async def get_genders():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
 @router.get("/{uuid_gender}", response_model = gender_schema_response)
-async def read_gender(uuid_gendert: str):
+def read_gender(uuid_gendert: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -65,7 +65,7 @@ async def read_gender(uuid_gendert: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.patch("/update", response_model = gender_schema_response)
-async def update_gender(gender_uuid: str, gender_models_2: gender_schema):
+def update_gender(gender_uuid: str, gender_models_2: gender_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -87,7 +87,7 @@ async def update_gender(gender_uuid: str, gender_models_2: gender_schema):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.delete("/{uuid_gender}")
-async def delete_gender(uuid_gender: str):
+def delete_gender(uuid_gender: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except

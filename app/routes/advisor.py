@@ -5,9 +5,9 @@ from app.schemas.advisor import Advisor as adv_schema_create
 from app.schemas.advisor import Advisor_update as adv_schema_update
 from app.config.db import get_db,Session
 from app.models.advisor import Advisor as adv_models
-from app.utils.func.document_type import check_uuid_document_type
-from app.utils.func.blood_type import check_uuid_blood_type
-from app.utils.func.advisor import check_identification_card
+from app.func.document_type import check_uuid_document_type
+from app.func.blood_type import check_uuid_blood_type
+from app.func.advisor import check_identification_card
 import uuid
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
@@ -86,7 +86,7 @@ def read_advisor(uuid: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-@router.get("/load", response_model = list[adv_schema_response])
+@router.get("/advisor", response_model = list[adv_schema_response])
 def load_advisor_for_name(name : str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

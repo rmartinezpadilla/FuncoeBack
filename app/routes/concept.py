@@ -11,7 +11,7 @@ from datetime import datetime
 router =  APIRouter(prefix='/concepts', dependencies=[Depends(JWTBearer())], tags=['Concepts'], responses={404 : {'message' : 'Not found'}})
 
 @router.post("/", response_model=concept_schema_response)
-async def create_concept(concept_obj:concept_schema):
+def create_concept(concept_obj:concept_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -40,7 +40,7 @@ async def create_concept(concept_obj:concept_schema):
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/all/",response_model = list[concept_schema_response])
-async def get_concepts():
+def get_concepts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -61,7 +61,7 @@ async def get_concepts():
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{uuid_concept}", response_model = concept_schema_response)
-async def read_concept(uuid_concept: str):
+def read_concept(uuid_concept: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -77,7 +77,7 @@ async def read_concept(uuid_concept: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.patch("/", response_model = concept_schema_response)
-async def update_concept(concept_uuid: str, concept_model_2: concept_schema):
+def update_concept(concept_uuid: str, concept_model_2: concept_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -99,7 +99,7 @@ async def update_concept(concept_uuid: str, concept_model_2: concept_schema):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.delete("/{uuid_concept}")
-async def delete_concept(uuid_concept: str):
+def delete_concept(uuid_concept: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except

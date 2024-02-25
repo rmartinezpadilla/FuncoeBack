@@ -1,8 +1,7 @@
 from cryptography.fernet import Fernet
 from app.schemas.user import User_login as user_schema_login
 from app.models.user import User as user_model
-from app.routes.role import get_rols
-from app.utils.func.rol import get_rol
+from app.func.rol import get_rol
 from app.config.db import get_db,Session
 import base64
 

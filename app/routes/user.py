@@ -6,7 +6,7 @@ from app.schemas.user import User_login as user_schema_login
 from app.auth.auth_bearer import JWTBearer
 from app.config.db import get_db,Session
 from app.models.user import User as user_model
-from app.utils.func import user as user_funcitons
+from app.func.user import *
 from app.auth.auth_handler import signJWT
 import uuid
 from datetime import datetime
@@ -15,7 +15,7 @@ router =  APIRouter(prefix='/users', tags=['Users'], responses={404 : {'message'
 
 @router.post("/token/")
 def get_token(user: user_schema_login):
-    if user_funcitons.validate_user(user):
+    if validate_user(user):
         return signJWT(user.user)
     return {
         "error": "Wrong login details or user inactive!"
@@ -43,6 +43,7 @@ def create_user(user_obj:user_schema):
     #¡fin try!
     except Exception as e: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+    
 @router.get("/all/", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
 def get_users():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
@@ -58,6 +59,7 @@ def get_users():
     #¡fin try!
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+    
 @router.get("/actives/", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
 def get_users_actives():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
