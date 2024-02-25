@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
+from sqlalchemy import desc
 from app.schemas.teacher import Teacher as teacher_schema
 from app.schemas.teacher import Teacher_response as teacher_schema_response
+from app.schemas.teacher import Teacher_update
 from app.config.db import get_db, Session
 from app.models.teacher import Teacher as teacher_models
 from app.auth.auth_bearer import JWTBearer
@@ -40,7 +42,7 @@ def create_teacher(teacher_obj:teacher_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", response_model = list[teacher_schema])
+@router.get("/all", response_model = list[teacher_schema_response])
 def get_teachers():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -50,16 +52,11 @@ def get_teachers():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(teacher_models)
+            r=db.query(teacher_models).order_by(desc(teacher_models.created_at))
             return r
     #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{uuid_teacher}", response_model = teacher_schema)
 def read_teacher(uuid_teacher: str):
@@ -98,6 +95,31 @@ def read_teacher_identification_card(number_card: str):
         #¡fin try!
     except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+    
+
+@router.patch("/update", response_model = teacher_schema_response)
+def update_teacher(teacher_uuid: str, teach_model_2: Teacher_update):
+    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+    #¡inicio try!
+        session = get_db()
+        db:Session
+        for db in session:            
+            teach_model_2 = teacher_models(**teach_model_2.model_dump())
+            r = db.query(teacher_models).where(teacher_models.uuid_teacher == teacher_uuid).first()        
+            if r is not None:                                
+                r.first_name = teach_model_2.first_name
+                r.last_name = teach_model_2.last_name
+                r.phone = teach_model_2.phone                                
+                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+                db.commit()
+                db.refresh(r)
+                return r
+            else:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id teacher not exist!')
+
+    #¡fin try!
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
 @router.delete("/{uuid_teacher}")
 def delete_teacher(uuid_teacher: str):
