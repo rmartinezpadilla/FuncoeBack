@@ -15,7 +15,7 @@ class Student(Base): #modelo de estudiante que representa la tabla en la base de
     municipality = Column(String(255),nullable=False)
     address = Column(String(255),nullable=False)
     phone = Column(String(255),nullable=False)
-    gender = Column(String(255),nullable=False)
+    gender_uuid = Column(String(255),nullable=False)
     email = Column(String(255),nullable=False)
     blood_type_uuid = Column(String(255), nullable=False, index=True)
     recommendation = Column(String(255),nullable=False)
