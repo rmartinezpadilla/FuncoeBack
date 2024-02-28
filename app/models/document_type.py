@@ -10,3 +10,6 @@ class Documents_types(Base): #modelo de asesor que representa la tabla en la bas
     document_type = Column(String(255), nullable=False)       
     created_at = Column(DateTime, default=datetime.now, nullable=False)    
     updated_at = Column(DateTime)
+
+    class Config:
+        orm_mode = True

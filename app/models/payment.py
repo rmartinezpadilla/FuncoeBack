@@ -12,3 +12,6 @@ class Payment(Base): #modelo de pagos que representa la tabla en la base de dato
     amount = Column(Float, nullable=False)       
     created_at = Column(DateTime, default=datetime.now, nullable=False)
     updated_at = Column(DateTime)
+    
+    class Config:
+        orm_mode = True

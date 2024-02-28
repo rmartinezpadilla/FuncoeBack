@@ -19,3 +19,6 @@ class Teacher(Base): #modelo de estudiante que representa la tabla en la base de
     last_connection = Column(DateTime)
     program_uuid = Column(String(255), nullable=False, index=True)
     updated_at = Column(DateTime)
+    
+    class Config:
+        orm_mode = True

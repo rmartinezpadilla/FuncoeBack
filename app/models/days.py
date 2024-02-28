@@ -9,3 +9,5 @@ class Days(Base): #modelo de asesor que representa la tabla en la base de datos
     uuid_day = Column(String(255), primary_key=True)
     name = Column(String(255), nullable=False)       
     
+    class Config:
+        orm_mode = True

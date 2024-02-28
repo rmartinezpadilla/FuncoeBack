@@ -15,3 +15,6 @@ class Advisor(Base): #modelo de asesor que representa la tabla en la base de dat
     blood_type = Column(String(255), nullable=False, index=True)    
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+    
+    class Config:
+        orm_mode = True

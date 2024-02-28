@@ -26,15 +26,15 @@ class Student(BaseModel):
 class Student_update(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear un estudiante        
-    first_name:str
-    last_name:str       
-    address:str
-    phone:str
-    email:Optional[EmailStr]    
-    advisor_uuid: Optional[str] = None
+    first_name:str = None
+    last_name:str = None  
+    address:str = None
+    phone:str = None
+    email:EmailStr = None
+    advisor_uuid: str = None
 
 class Student_response(BaseModel):
-    uuid_student:Optional[str] = None
+    uuid_student:str
     document_type_uuid:str
     identification_card:str
     birthdate:date
@@ -52,5 +52,5 @@ class Student_response(BaseModel):
     working_day:str
     registration_number:int
     advisor_uuid:str
-    created_at:Optional[datetime] = None
+    created_at:datetime
     updated_at:Optional[datetime] = None

@@ -7,3 +7,6 @@ class Blood_type(Base): #modelo de asesor que representa la tabla en la base de 
     __tablename__='blood_type'    
     uuid_blood_type = Column(String(255), primary_key=True)    
     blood_type = Column(String(255),nullable=False)    
+
+    class Config:
+        orm_mode = True
