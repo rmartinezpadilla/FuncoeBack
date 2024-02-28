@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
 from sqlalchemy import desc
+import typing
 from app.schemas.advisor import Advisor_response as adv_schema_response
 from app.schemas.advisor import Advisor as adv_schema_create
 from app.schemas.advisor import Advisor_update as adv_schema_update
@@ -48,7 +49,7 @@ def create_advisor(advisor_obj:adv_schema_create):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all/", response_model=list[adv_schema_response])
+@router.get("/all/", response_model=typing.List[adv_schema_response])
 def get_advisors():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

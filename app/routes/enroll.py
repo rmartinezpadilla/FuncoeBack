@@ -4,6 +4,7 @@ from app.schemas.enroll import Enroll_response as enroll_schema_response
 from app.config.db import get_db,Session
 from app.models.enroll import Enroll as enroll_model
 from app.auth.auth_bearer import JWTBearer
+import typing
 
 router =  APIRouter(prefix='/enrolls', dependencies=[Depends(JWTBearer())], tags=['Enrolls'], responses={404 : {'message' : 'Not found'}})
 
@@ -34,7 +35,7 @@ def create_enroll(advisor_obj:enroll_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", response_model = list[enroll_schema_response])
+@router.get("/all", response_model = typing.List[enroll_schema_response])
 def get_enrolls():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

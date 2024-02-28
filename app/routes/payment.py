@@ -5,6 +5,7 @@ from app.models.payment import Payment as payment_model
 import uuid
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
+import typing
 
 router =  APIRouter(prefix='/payments', dependencies=[Depends(JWTBearer())], tags=['Payments'], responses={404 : {'message' : 'Not found'}})
 
@@ -37,7 +38,7 @@ def create_payment(payment_obj:payment_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[payment_schema])
+@router.get("/", response_model = typing.List[payment_schema])
 def get_payments():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

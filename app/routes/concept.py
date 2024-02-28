@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
 from sqlalchemy import desc
+import typing
 from app.schemas.concept import Concept as concept_schema
 from app.schemas.concept import Concept_response as concept_schema_response
 from app.config.db import get_db,Session
@@ -39,7 +40,7 @@ def create_concept(concept_obj:concept_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all/",response_model = list[concept_schema_response])
+@router.get("/all/",response_model = typing.List[concept_schema_response])
 def get_concepts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

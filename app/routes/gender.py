@@ -7,6 +7,7 @@ from app.models.gender import Gender as gender_models
 from app.auth.auth_bearer import JWTBearer
 import uuid
 from datetime import datetime
+import typing
 
 router =  APIRouter(prefix='/genders', dependencies=[Depends(JWTBearer())], tags=['Genders'], responses={404 : {'message' : 'Not found'}})
 
@@ -32,7 +33,7 @@ def create_gender(gender_obj:gender_schema):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
-@router.get("/all/",response_model = list[gender_schema_response])
+@router.get("/all/",response_model = typing.List[gender_schema_response])
 def get_genders():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
