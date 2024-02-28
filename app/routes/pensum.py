@@ -4,10 +4,10 @@ from app.config.db import get_db,Session
 from app.models.pensum import Pensum as pensum_model
 import uuid
 from datetime import datetime
+import typing
 from app.auth.auth_bearer import JWTBearer
 
 router =  APIRouter(prefix='/pensum', dependencies=[Depends(JWTBearer())], tags=['Pensum'], responses={404 : {'message' : 'Not found'}})
-
 
 @router.post("/")
 def create_pensum(pensum_obj:pensum_schema):
@@ -38,7 +38,7 @@ def create_pensum(pensum_obj:pensum_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[pensum_schema])
+@router.get("/", response_model = typing.List[pensum_schema])
 def get_pensums():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

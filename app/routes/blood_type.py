@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+import typing
 from app.schemas.blood_type import Blood_type as blood_type_schema
 from app.config.db import get_db,Session
 from app.models.blood_type import Blood_type as blood_type_model
@@ -6,7 +7,7 @@ from app.auth.auth_bearer import JWTBearer
 
 router =  APIRouter(prefix='/blood_type', dependencies=[Depends(JWTBearer())], tags=['Blood Types'], responses={404 : {'message' : 'Not found'}})
 
-@router.get("/", response_model = list[blood_type_schema])
+@router.get("/", response_model = typing.List[blood_type_schema])
 def get_blood_types():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

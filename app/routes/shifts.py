@@ -5,6 +5,7 @@ from app.models.shifts import Shifts as shifts_model
 from app.auth.auth_bearer import JWTBearer
 import uuid
 from datetime import datetime
+import typing
 
 
 router =  APIRouter(prefix='/shifts', dependencies=[Depends(JWTBearer())], tags=['Shifts'], responses={404 : {'message' : 'Not found'}})
@@ -39,7 +40,7 @@ def create_shifts(shifts_obj:shifts_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[shifts_schema])
+@router.get("/", response_model = typing.List[shifts_schema])
 def get_shifts():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

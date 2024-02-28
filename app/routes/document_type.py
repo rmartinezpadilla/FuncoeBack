@@ -3,10 +3,11 @@ from app.schemas.document_type import Document_type as doc_type_schema
 from app.config.db import get_db, Session
 from app.models.document_type import Documents_types as doc_type_models
 from app.auth.auth_bearer import JWTBearer
+import typing
 
 router =  APIRouter(prefix='/document_type', dependencies=[Depends(JWTBearer())], tags=['Documents Types'], responses={404 : {'message' : 'Not found'}})
 
-@router.get("/all", response_model = list[doc_type_schema])
+@router.get("/all", response_model = typing.List[doc_type_schema])
 def get_documents_types():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

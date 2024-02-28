@@ -9,6 +9,7 @@ from app.models.user import User as user_model
 from app.func.user import *
 from app.auth.auth_handler import signJWT
 import uuid
+import typing
 from datetime import datetime
 
 router =  APIRouter(prefix='/users', tags=['Users'], responses={404 : {'message' : 'Not found'}})
@@ -44,7 +45,7 @@ def create_user(user_obj:user_schema):
     except Exception as e: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
-@router.get("/all/", dependencies=[Depends(JWTBearer())], response_model = list[user_schema_response])
+@router.get("/all/", dependencies=[Depends(JWTBearer())], response_model = typing.List[user_schema_response])
 def get_users():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

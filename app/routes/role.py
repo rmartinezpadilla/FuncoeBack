@@ -5,6 +5,7 @@ from app.schemas.role import Role_response as role_schema_response
 from app.config.db import get_db,Session
 from app.models.role import Role as role_model
 import uuid
+import typing
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
 
@@ -39,7 +40,7 @@ def create_rol(role_obj:role_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", response_model = list[role_schema_response])
+@router.get("/all", response_model = typing.List[role_schema_response])
 def get_rols():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

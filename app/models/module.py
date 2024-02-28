@@ -12,3 +12,6 @@ class Module(Base): #modelo de asesor que representa la tabla en la base de dato
     semester_uuid = Column(String(255),nullable=False)    
     created_at = Column(DateTime, default=datetime.now, nullable=False)    
     updated_at = Column(DateTime)
+    
+    class Config:
+        orm_mode = True

@@ -10,3 +10,6 @@ class Concept(Base): #modelo de asesor que representa la tabla en la base de dat
     name = Column(String(255), nullable=False)    
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+
+    class Config:
+        orm_mode = True

@@ -13,3 +13,6 @@ class Shifts(Base): #modelo de asesor que representa la tabla en la base de dato
     created_at = Column(DateTime, default=datetime.now, nullable=False)
     teacher_uuid = Column(String(255), nullable=False, index=True)
     updated_at = Column(DateTime, default=datetime.now, nullable=False)
+    
+    class Config:
+        orm_mode = True

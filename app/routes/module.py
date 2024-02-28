@@ -6,6 +6,7 @@ from app.models.module import Module as module_model
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
 from uuid import uuid4
+import typing
 
 router =  APIRouter(prefix='/modules', dependencies=[Depends(JWTBearer())], tags=['Modules'], responses={404 : {'message' : 'Not found'}})
 
@@ -36,7 +37,7 @@ def create_module(module_obj:module_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[module_schema_response])
+@router.get("/", response_model = typing.List[module_schema_response])
 def get_modules():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

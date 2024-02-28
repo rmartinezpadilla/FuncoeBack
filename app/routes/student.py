@@ -1,10 +1,15 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
+from fastapi_pagination import Page, add_pagination
+from fastapi_pagination.ext.sqlalchemy_future import _paginate
+from sqlalchemy import desc
+import typing
 from app.schemas.student import Student as student_schema
 from app.schemas.student import Student_update
 from app.schemas.student import Student_response as student_schema_response
 from app.config.db import get_db,Session
 from app.models.student import Student as student_models
 from app.auth.auth_bearer import JWTBearer
+from fastapi.encoders import jsonable_encoder
 import uuid
 from datetime import datetime
 
@@ -32,7 +37,7 @@ def create_student(student_obj : student_schema):
     except Exception as e: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
-@router.get("/allStudents/", response_model = list[student_schema_response])
+@router.get("/all/", response_model = typing.List[student_schema_response])
 def get_students():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -42,13 +47,11 @@ def get_students():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(student_models)
+            #r=_paginate(db.query(student_models).order_by(desc(student_models.created_at)))        
+            r=db.query(student_models).order_by(desc(student_models.created_at))
             return r
     #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
@@ -92,7 +95,7 @@ def get_advisor_identification_card(number_document: str):
     except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-@router.patch("/update/", response_model = student_schema_response)
+@router.patch("/{uuid_student}", response_model = student_schema_response)
 def update_student(student_uuid: str, student_model_2: Student_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -100,21 +103,47 @@ def update_student(student_uuid: str, student_model_2: Student_update):
         db:Session
         for db in session:            
             student_model_2 = student_models(**student_model_2.model_dump())
-            r = db.query(student_models).where(student_models.uuid_student == student_uuid).first()        
-            if r is not None:                                
-                r.first_name = student_model_2.first_name
-                r.last_name = student_model_2.last_name                
-                r.phone = student_model_2.phone                                
+            r = db.query(student_models).filter(student_models.uuid_student == student_uuid)
+            if r.first() is not None:               
+                # r.first_name = student_model_2.first_name
+                # r.last_name = student_model_2.last_name                
+                # r.phone = student_model_2.phone
+                # r.advisor_uuid = student_model_2.advisor_uuid
+                r.update(student_model_2(exclude_unset=True))            
                 r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
                 db.commit()
                 db.refresh(r)
                 return r
             else:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id teacher not exist!')
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id student not exist!')
 
     #¡fin try!
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+
+
+# @router.put("/", response_model = student_schema_response)
+# def update_student(student_uuid: str, student_model_2: Student_update):
+#     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+#     #¡inicio try!
+#         session = get_db()
+#         db:Session
+#         for db in session:            
+#             student_model_2 = student_models(**student_model_2.model_dump())
+#             r = db.query(student_models).where(student_models.uuid_student == student_uuid).one()        
+#             if r is not None:  
+#                 r.update(student_model_2)                                                                   
+#                 r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')                
+#                 db.commit()
+#                 db.refresh(r)
+#                 return r
+#             else:
+#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id student not exist!')
+
+#     #¡fin try!
+#     except Exception as e:
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+
 
 @router.delete("/{uuid_student}")
 def delete_student(uuid_student: str):
@@ -139,3 +168,5 @@ def delete_student(uuid_student: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException            }
+    
+

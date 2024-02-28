@@ -7,7 +7,7 @@ from app.models.semester import Semester as semester_model
 from app.auth.auth_bearer import JWTBearer
 from datetime import datetime
 import uuid
-
+import typing
 
 router =  APIRouter(prefix='/semesters', dependencies=[Depends(JWTBearer())], tags=['Semesters'], responses={404 : {'message' : 'Not found'}})
 
@@ -41,7 +41,7 @@ def create_semester(semester_obj:semester_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = list[semester_schema])
+@router.get("/", response_model = typing.List[semester_schema])
 def get_semesters():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -135,7 +135,7 @@ def delete_semester(uuid_semester: str):
         #un error, en este caso el error esta contenido en HTTPException            }
     
 @router.put("/{uuid_semester}")
-async def update_semester(uuid_semester : str, semester_obj_update : semester_update_schema):
+def update_semester(uuid_semester : str, semester_obj_update : semester_update_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()

@@ -9,6 +9,7 @@ from app.auth.auth_bearer import JWTBearer
 from app.func.teacher import *
 from datetime import datetime
 import uuid
+import typing
 
 router =  APIRouter(prefix='/teachers', dependencies=[Depends(JWTBearer())], tags=['Teachers'], responses={404 : {'message' : 'Not found'}})
 
@@ -42,7 +43,7 @@ def create_teacher(teacher_obj:teacher_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all", response_model = list[teacher_schema_response])
+@router.get("/all", response_model = typing.List[teacher_schema_response])
 def get_teachers():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

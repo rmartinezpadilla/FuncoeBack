@@ -7,6 +7,7 @@ from app.models.program import Program as program_models
 from app.auth.auth_bearer import JWTBearer
 from datetime import datetime
 import uuid
+import typing
 
 router =  APIRouter(prefix='/programs', dependencies=[Depends(JWTBearer())], tags=['Programs'], responses={404 : {'message' : 'Not found'}})
 
@@ -34,7 +35,7 @@ async def create_program(program_obj:program_schema):
     except Exception as e: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-@router.get("/all/", response_model = list[program_schema_response])
+@router.get("/all/", response_model = typing.List[program_schema_response])
 def get_programs():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
