@@ -11,7 +11,19 @@ class Module(BaseModel):
 
     class config:
         orm_mode = True  
-    
+
+
+class Module_update(BaseModel):
+    #modelo de pydantic que sirve para recibir los datos de entrada de la api
+    #en este caso lo utilizaremos para crear una persona   
+    name:Optional[str] = None
+    program_uuid:Optional[str] = None
+    semester_uuid:Optional[str] = None
+
+    class config:
+        orm_mode = True
+
+
 class Module_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear una persona
