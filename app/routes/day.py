@@ -17,7 +17,7 @@ async def get_days():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(day_models)
+            r=db.query(day_models).all()
             return r
     #¡fin try!
     except Exception as e:

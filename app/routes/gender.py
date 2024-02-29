@@ -43,7 +43,7 @@ def get_genders():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(gender_models).order_by(desc(gender_models.created_at))
+            r=db.query(gender_models).order_by(desc(gender_models.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:

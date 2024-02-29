@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
-from fastapi_pagination import Page, add_pagination
-from fastapi_pagination.ext.sqlalchemy_future import _paginate
+from fastapi_pagination import add_pagination, paginate, LimitOffsetPage
 from sqlalchemy import desc
-import typing
 from app.schemas.student import Student as student_schema
 from app.schemas.student import Student_update
 from app.schemas.student import Student_response as student_schema_response
@@ -36,26 +34,21 @@ def create_student(student_obj : student_schema):
     #¡fin try!
     except Exception as e: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-    
-@router.get("/all/", response_model = typing.List[student_schema_response])
+
+@router.get("/all/", response_model = LimitOffsetPage[student_schema_response])
 def get_students():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
-        for db in session:
-            #se usa la instrucción where para buscar por el id y se ejecuta el first para
-            #encontrar la primera coincidencia, esto es posible porque el id es un 
-            #identificador unico
+        for db in session:            
             #r=_paginate(db.query(student_models).order_by(desc(student_models.created_at)))        
-            r=db.query(student_models).order_by(desc(student_models.created_at))
-            return r
+            r=db.query(student_models).order_by(desc(student_models.created_at)).all()
+            return paginate(r)
     #¡fin try!
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException
-
+    
 @router.get("/{uuid_student}", response_model = student_schema_response)
 def read_student(uuid_student: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
@@ -169,4 +162,4 @@ def delete_student(uuid_student: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException            }
     
-
+add_pagination(router)

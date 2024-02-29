@@ -42,7 +42,7 @@ def get_programs():
         session = get_db()
         db:Session
         for db in session:           
-            r=db.query(program_models).order_by(desc(program_models.created_at))
+            r=db.query(program_models).order_by(desc(program_models.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:

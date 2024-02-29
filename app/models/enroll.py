@@ -21,4 +21,5 @@ class Enroll(Base): #modelo de matricula que representa la tabla en la base de d
     #updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
     
     class Config:
+        from_attributes = True
         orm_mode = True

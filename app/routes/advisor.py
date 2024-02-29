@@ -4,6 +4,7 @@ import typing
 from app.schemas.advisor import Advisor_response as adv_schema_response
 from app.schemas.advisor import Advisor as adv_schema_create
 from app.schemas.advisor import Advisor_update as adv_schema_update
+from fastapi_pagination import add_pagination, paginate, LimitOffsetPage
 from app.config.db import get_db,Session
 from app.models.advisor import Advisor as adv_models
 from app.func.document_type import check_uuid_document_type
@@ -49,7 +50,7 @@ def create_advisor(advisor_obj:adv_schema_create):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/all/", response_model=typing.List[adv_schema_response])
+@router.get("/all/", response_model=LimitOffsetPage[adv_schema_response])
 def get_advisors():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -59,8 +60,8 @@ def get_advisors():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(adv_models).order_by(desc(adv_models.created_at))
-            return r
+            r=db.query(adv_models).order_by(desc(adv_models.created_at)).all()
+            return paginate(r)
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
         #se debe controlar siempre que nos conectamos a una base de datos con un try - except
@@ -188,4 +189,4 @@ def delete_advisor(id: str):
     
     """
 
-
+add_pagination(router)

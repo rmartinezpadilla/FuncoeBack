@@ -10,4 +10,5 @@ class Days(Base): #modelo de asesor que representa la tabla en la base de datos
     name = Column(String(255), nullable=False)       
     
     class Config:
+        from_attributes = True
         orm_mode = True

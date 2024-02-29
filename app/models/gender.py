@@ -12,4 +12,5 @@ class Gender(Base): #modelo de asesor que representa la tabla en la base de dato
     updated_at = Column(DateTime)
     
     class Config:
+        from_attributes = True
         orm_mode = True

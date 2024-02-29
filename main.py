@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.routes import advisor, blood_type, gender, day, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
 import uvicorn
 
-app = FastAPI()
+app = FastAPI(title="Api funcoe",debug=True)
 app.include_router(user.router)
 app.include_router(advisor.router)
 app.include_router(document_type.router)
