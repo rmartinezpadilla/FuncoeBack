@@ -21,15 +21,13 @@ class Advisor(BaseModel):
 class Advisor_update(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear una persona
-    #uuid_advisor:Optional[str] = None
-    document_type_uuid:Optional[str] = None
-    identification_card:Optional[str] = None
+    #uuid_advisor:Optional[str] = None    
     first_name:Optional[str] = None
     last_name:Optional[str] = None
     gender_uuid:Optional[str] = None
     phone:Optional[str] = None
     email:Optional[EmailStr] = None
-    blood_type:Optional[str]= None
+    
 
     class config:
         orm_mode = True
