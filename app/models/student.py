@@ -28,4 +28,5 @@ class Student(Base): #modelo de estudiante que representa la tabla en la base de
     updated_at = Column(DateTime)
 
     class Config:
+        from_attributes = True
         orm_mode = True

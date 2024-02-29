@@ -50,7 +50,7 @@ def get_rols():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(role_model).order_by(desc(role_model.created_at))
+            r=db.query(role_model).order_by(desc(role_model.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:

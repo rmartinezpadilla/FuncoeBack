@@ -59,7 +59,7 @@ def get_advisors():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(adv_models).order_by(desc(adv_models.created_at))
+            r=db.query(adv_models).order_by(desc(adv_models.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla

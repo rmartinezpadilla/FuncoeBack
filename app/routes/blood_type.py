@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 import typing
 from app.schemas.blood_type import Blood_type as blood_type_schema
+from sqlalchemy import desc
 from app.config.db import get_db,Session
 from app.models.blood_type import Blood_type as blood_type_model
 from app.auth.auth_bearer import JWTBearer
@@ -17,7 +18,7 @@ def get_blood_types():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(blood_type_model)
+            r=db.query(blood_type_model).order_by(desc(blood_type_model.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla

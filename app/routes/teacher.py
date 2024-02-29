@@ -53,7 +53,7 @@ def get_teachers():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(teacher_models).order_by(desc(teacher_models.created_at))
+            r=db.query(teacher_models).order_by(desc(teacher_models.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:

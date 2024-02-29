@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from app.auth.auth_bearer import JWTBearer
 import typing
+from sqlalchemy import desc
 
 router =  APIRouter(prefix='/payments', dependencies=[Depends(JWTBearer())], tags=['Payments'], responses={404 : {'message' : 'Not found'}})
 
@@ -48,7 +49,7 @@ def get_payments():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(payment_model)
+            r=db.query(payment_model).order_by(desc(payment_model.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla

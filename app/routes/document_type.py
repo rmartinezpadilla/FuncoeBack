@@ -3,6 +3,7 @@ from app.schemas.document_type import Document_type as doc_type_schema
 from app.config.db import get_db, Session
 from app.models.document_type import Documents_types as doc_type_models
 from app.auth.auth_bearer import JWTBearer
+from sqlalchemy import desc
 import typing
 
 router =  APIRouter(prefix='/document_type', dependencies=[Depends(JWTBearer())], tags=['Documents Types'], responses={404 : {'message' : 'Not found'}})
@@ -17,7 +18,7 @@ def get_documents_types():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(doc_type_models)
+            r=db.query(doc_type_models).order_by(desc(doc_type_models.created_at)).all()
             return r
     #¡fin try!
     except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
