@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
 from fastapi.encoders import jsonable_encoder
 from app.schemas.semester import Semester as semester_schema
+from app.schemas.semester import Semester_response as semester_schema_response
 from app.schemas.semester import SemesterUpdate as semester_update_schema
 from app.config.db import get_db, Session
 from app.models.semester import Semester as semester_model
@@ -14,7 +15,7 @@ router =  APIRouter(prefix='/semesters', dependencies=[Depends(JWTBearer())], ta
 
 
 @router.post("/")
-def create_semester(semester_obj:semester_schema):
+def create_semester(semester_obj:semester_schema_response):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -42,7 +43,7 @@ def create_semester(semester_obj:semester_schema):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/", response_model = typing.List[semester_schema])
+@router.get("/", response_model = typing.List[semester_schema_response])
 def get_semesters():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -63,7 +64,7 @@ def get_semesters():
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
 
-@router.get("/{id}", response_model = semester_schema)
+@router.get("/{id}", response_model = semester_schema_response)
 def read_semester(uuid_semester: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -84,7 +85,7 @@ def read_semester(uuid_semester: str):
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException
     
-@router.get("/{name}", response_model = semester_schema)
+@router.get("/{name}", response_model = semester_schema_response)
 def read_semester_name(name: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
         #¡inicio try!
