@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, status, Depends
-from fastapi_pagination import Page, add_pagination, paginate, LimitOffsetPage
-#from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import add_pagination, paginate, LimitOffsetPage
 from sqlalchemy import desc
-import typing
 from app.schemas.student import Student as student_schema
 from app.schemas.student import Student_update
 from app.schemas.student import Student_response as student_schema_response

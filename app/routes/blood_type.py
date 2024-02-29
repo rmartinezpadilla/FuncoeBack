@@ -18,16 +18,11 @@ def get_blood_types():
             #se usa la instrucción where para buscar por el id y se ejecuta el first para
             #encontrar la primera coincidencia, esto es posible porque el id es un 
             #identificador unico
-            r=db.query(blood_type_model).order_by(desc(blood_type_model.created_at)).all()
+            r=db.query(blood_type_model).all()
             return r
     #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-        #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-        #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-        #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{uuid_blood_type}", response_model = blood_type_schema)
 def read_blood_type(uuid_blood_type: str):
