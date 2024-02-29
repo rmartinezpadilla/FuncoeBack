@@ -2,7 +2,7 @@ from fastapi import APIRouter, Response, HTTPException, status, Depends
 from fastapi_pagination import add_pagination, paginate, LimitOffsetPage
 from sqlalchemy import desc
 from app.schemas.student import Student as student_schema
-from app.schemas.student import Student_update
+from app.schemas.student import Student_update as student_schema_update
 from app.schemas.student import Student_response as student_schema_response
 from app.config.db import get_db,Session
 from app.models.student import Student as student_models
@@ -89,54 +89,26 @@ def get_advisor_identification_card(number_document: str):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 @router.patch("/{uuid_student}", response_model = student_schema_response)
-def update_student(student_uuid: str, student_model_2: Student_update):
+def update_student(uuid:str, student_model_2: student_schema_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
-        for db in session:            
-            student_model_2 = student_models(**student_model_2.model_dump())
-            r = db.query(student_models).filter(student_models.uuid_student == student_uuid)
-            if r.first() is not None:               
-                # r.first_name = student_model_2.first_name
-                # r.last_name = student_model_2.last_name                
-                # r.phone = student_model_2.phone
-                # r.advisor_uuid = student_model_2.advisor_uuid
-                r.update(student_model_2(exclude_unset=True))            
-                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        for db in session:                        
+            r = db.query(student_models).filter_by(uuid_student = uuid).first()
+            if not r:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id student not exist!')                
+            else:                
+                for key, value in student_model_2.model_dump(exclude_unset=True).items():
+                    setattr(r, key, value)                           
+                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')                    
                 db.commit()
                 db.refresh(r)
                 return r
-            else:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id student not exist!')
 
     #¡fin try!
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-
-
-# @router.put("/", response_model = student_schema_response)
-# def update_student(student_uuid: str, student_model_2: Student_update):
-#     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
-#     #¡inicio try!
-#         session = get_db()
-#         db:Session
-#         for db in session:            
-#             student_model_2 = student_models(**student_model_2.model_dump())
-#             r = db.query(student_models).where(student_models.uuid_student == student_uuid).one()        
-#             if r is not None:  
-#                 r.update(student_model_2)                                                                   
-#                 r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')                
-#                 db.commit()
-#                 db.refresh(r)
-#                 return r
-#             else:
-#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id student not exist!')
-
-#     #¡fin try!
-#     except Exception as e:
-#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-
 
 @router.delete("/{uuid_student}")
 def delete_student(uuid_student: str):
