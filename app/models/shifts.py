@@ -15,4 +15,5 @@ class Shifts(Base): #modelo de asesor que representa la tabla en la base de dato
     updated_at = Column(DateTime, default=datetime.now, nullable=False)
     
     class Config:
+        from_attributes = True
         orm_mode = True

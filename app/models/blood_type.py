@@ -9,4 +9,5 @@ class Blood_type(Base): #modelo de asesor que representa la tabla en la base de 
     blood_type = Column(String(255),nullable=False)    
 
     class Config:
+        from_attributes = True
         orm_mode = True
