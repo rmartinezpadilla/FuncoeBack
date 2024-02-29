@@ -90,20 +90,12 @@ def read_module(module_name: str):
             session = get_db()
             db:Session
             for db in session:
-                #se usa la instrucción where para buscar por el id y se ejecuta el first para
-                #encontrar la primera coincidencia, esto es posible porque el id es un 
-                #identificador unico
                 r=db.query(module_model).where(module_model.name == module_name).first()
                 #r=db.select(module_model).where(module_model.identification_card == id_card)
                 return r
         #¡fin try!
-    except Exception as e:#instrucción que nos ayuda a atrapar la excepción que ocurre cuando alguna instrucción dentro de try falla
-            #se debe controlar siempre que nos conectamos a una base de datos con un try - except
-            #debido a que no podemos controlar la respuesta del servicio externo (en este caso la base de datos)
-            #y es muy posible que la conexión falle por lo cual debemos responder que paso
+    except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-            #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-            #un error, en este caso el error esta contenido en HTTPException
 
 @router.patch("/{uuid_module}", response_model = module_schema_response)
 def update_module(uuid:str, module_my_model: Module_update):
