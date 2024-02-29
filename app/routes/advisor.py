@@ -161,7 +161,7 @@ def get_advisor_identification_card(number_document: int):
 
 
 @router.patch("/{uuid_advisor}", response_model = adv_schema_response)
-def update_student(uuid:str, advisor_my_model: adv_schema_update):
+def update_advisor(uuid:str, advisor_my_model: adv_schema_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()

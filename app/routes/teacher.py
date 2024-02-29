@@ -97,25 +97,23 @@ def read_teacher_identification_card(number_card: str):
     except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
-@router.patch("/update", response_model = teacher_schema_response)
-def update_teacher(teacher_uuid: str, teach_model_2: Teacher_update):
+@router.patch("/{uuid_teacher}", response_model = teacher_schema_response)
+def update_teacher(uuid:str, teacher_my_model: Teacher_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
-        for db in session:            
-            teach_model_2 = teacher_models(**teach_model_2.model_dump())
-            r = db.query(teacher_models).where(teacher_models.uuid_teacher == teacher_uuid).first()        
-            if r is not None:                                
-                r.first_name = teach_model_2.first_name
-                r.last_name = teach_model_2.last_name
-                r.phone = teach_model_2.phone                                
-                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        for db in session:                        
+            r = db.query(teacher_models).filter_by(uuid_teacher = uuid).first()
+            if not r:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id teacher not exist!')                
+            else:                
+                for key, value in teacher_my_model.model_dump(exclude_unset=True).items():
+                    setattr(r, key, value)                           
+                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')                    
                 db.commit()
                 db.refresh(r)
                 return r
-            else:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id teacher not exist!')
 
     #¡fin try!
     except Exception as e:
