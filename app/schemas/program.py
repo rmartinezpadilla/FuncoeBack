@@ -6,6 +6,9 @@ class Program(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear una persona    
     name:str
+    
+    class config:
+        orm_mode = True 
 
 class Program_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
@@ -14,3 +17,6 @@ class Program_response(BaseModel):
     name:str
     created_at:datetime
     updated_at:Optional[datetime] = None
+    
+    class config:
+        orm_mode = True 

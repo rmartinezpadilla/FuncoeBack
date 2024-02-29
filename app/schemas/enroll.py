@@ -14,11 +14,12 @@ class Enroll(BaseModel):
     positive_balance:float
     dues:int
     number_of_installments:int
-    installment_value:float   
-    created_at:Optional[datetime] = None
-    updated_at:Optional[datetime] = None
+    installment_value:float
+
     # created_at:datetime
     # updated_at:datetime
+    class config:
+        orm_mode = True
    
 class Enroll_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
@@ -35,4 +36,7 @@ class Enroll_response(BaseModel):
     installment_value:float   
     created_at:datetime
     updated_at:Optional[datetime] = None
+    
+    class config:
+        orm_mode = True
     
