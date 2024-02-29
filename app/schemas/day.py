@@ -6,3 +6,5 @@ class Day(BaseModel):
     uuid_day:str
     name:str    
     
+    class config:
+        orm_mode = True

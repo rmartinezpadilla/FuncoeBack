@@ -14,15 +14,21 @@ class Teacher(BaseModel):
     phone:str    
     user:str
     password:str    
-    program_uuid:str        
+    program_uuid:str
+
+    class config:
+        orm_mode = True   
 
 class Teacher_update(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear un profesor        
-    first_name:str
-    last_name:str    
-    phone:str    
+    first_name:Optional[str] = None
+    last_name:Optional[str] = None    
+    phone:Optional[str] = None    
     program_uuid:Optional[str] = None
+
+    class config:
+        orm_mode = True
 
 class Teacher_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
@@ -40,4 +46,7 @@ class Teacher_response(BaseModel):
     created_at:datetime
     last_connection:Optional[datetime] = None
     program_uuid:str    
-    updated_at:Optional[datetime] = None    
+    updated_at:Optional[datetime] = None
+
+    class config:
+        orm_mode = True

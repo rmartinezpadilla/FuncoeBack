@@ -8,11 +8,17 @@ class User(BaseModel):
     password:str
     rol_uuid:str
 
+    class config:
+        orm_mode = True
+
 class User_login(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear una persona    
     user:str
     password:str
+
+    class config:
+        orm_mode = True
 
 class User_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
@@ -25,5 +31,7 @@ class User_response(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime]
     last_connection: Optional[datetime]
-    #password:str 
+    
+    class config:
+        orm_mode = True
     

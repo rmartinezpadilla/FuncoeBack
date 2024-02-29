@@ -7,8 +7,23 @@ class Module(BaseModel):
     #en este caso lo utilizaremos para crear una persona   
     name:str
     program_uuid:str
-    semester_uuid:str    
-    
+    semester_uuid:str
+
+    class config:
+        orm_mode = True  
+
+
+class Module_update(BaseModel):
+    #modelo de pydantic que sirve para recibir los datos de entrada de la api
+    #en este caso lo utilizaremos para crear una persona   
+    name:Optional[str] = None
+    program_uuid:Optional[str] = None
+    semester_uuid:Optional[str] = None
+
+    class config:
+        orm_mode = True
+
+
 class Module_response(BaseModel):
     #modelo de pydantic que sirve para recibir los datos de entrada de la api
     #en este caso lo utilizaremos para crear una persona
@@ -18,11 +33,9 @@ class Module_response(BaseModel):
     semester_uuid:str
     created_at:datetime
     updated_at:Optional[datetime] = None
-#class Advisor_request(BaseModel):
-    #modelo de pydantic que sirve para recibir los datos de entrada de la api
-    #en este caso la utilizaremos para buscar una persona por usuario y contraseña
-    # usuario:str
-    # password:str
+
+    class config:
+        orm_mode = True
     
 #es indispensable tener en cuenta que los modelos de pydantic no son los mismos de sqlalchemy
 #y que pueden variar con base a la necesidad a utilizar en todo el proyecto

@@ -131,34 +131,57 @@ def get_advisor_identification_card(number_document: int):
             #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
             #un error, en este caso el error esta contenido en HTTPException
 
-@router.patch("/update/", response_model = adv_schema_response)
-def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
+# @router.patch("/update/", response_model = adv_schema_response)
+# def update_advisor(adv_uuid: str, advisor_model_2: adv_schema_update):
+#     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+#     #¡inicio try!
+#         session = get_db()
+#         db:Session
+#         for db in session:            
+#             advisor_model_2 = adv_models(**advisor_model_2.model_dump())
+#             r = db.query(adv_models).where(adv_models.uuid_advisor == adv_uuid).first()        
+#             if r is not None:
+#                 r.document_type_uuid = advisor_model_2.document_type_uuid
+#                 r.identification_card = advisor_model_2.identification_card
+#                 r.first_name = advisor_model_2.first_name
+#                 r.last_name = advisor_model_2.last_name
+#                 r.phone = advisor_model_2.phone
+#                 r.email = advisor_model_2.email
+#                 r.blood_type = advisor_model_2.blood_type
+#                 r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+#                 db.commit()
+#                 db.refresh(r)
+#                 return r
+#             else:
+#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id advisor not exist!')
+
+#     #¡fin try!
+#     except Exception as e:
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+
+
+@router.patch("/{uuid_advisor}", response_model = adv_schema_response)
+def update_advisor(uuid:str, advisor_my_model: adv_schema_update):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
         db:Session
-        for db in session:            
-            advisor_model_2 = adv_models(**advisor_model_2.model_dump())
-            r = db.query(adv_models).where(adv_models.uuid_advisor == adv_uuid).first()        
-            if r is not None:
-                r.document_type_uuid = advisor_model_2.document_type_uuid
-                r.identification_card = advisor_model_2.identification_card
-                r.first_name = advisor_model_2.first_name
-                r.last_name = advisor_model_2.last_name
-                r.phone = advisor_model_2.phone
-                r.email = advisor_model_2.email
-                r.blood_type = advisor_model_2.blood_type
-                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        for db in session:                        
+            r = db.query(adv_models).filter_by(uuid_advisor = uuid).first()
+            if not r:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id advisor not exist!')                
+            else:                
+                for key, value in advisor_my_model.model_dump(exclude_unset=True).items():
+                    setattr(r, key, value)                           
+                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')                    
                 db.commit()
                 db.refresh(r)
                 return r
-            else:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id advisor not exist!')
 
     #¡fin try!
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        
+
 @router.delete("/{id}/")
 def delete_advisor(id: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
