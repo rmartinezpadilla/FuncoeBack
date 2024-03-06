@@ -24,8 +24,8 @@ def get_pensums():
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-@router.post("/")
-def create_pensum(pensum_obj:pensum_schema_response):
+@router.post("/", response_model=pensum_schema_response)
+def create_pensum(pensum_obj:pensum_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
