@@ -118,24 +118,24 @@ def update_module(uuid:str, module_my_model: Module_update):
     #¡fin try!
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-            
-@router.delete("/{uuid_module}")
-def delete_module(uuid_module: str):
-    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
-    #¡inicio try!
-        #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except
-        session = get_db()
-        db:Session
-        for db in session:
-            r=db.query(module_model).where(module_model.uuid_module == uuid_module).one_or_none()
-            if r is not None:
-                db.delete(r)#instruccion para borrar un recurso
-                db.commit()
-                return Response(status_code=status.HTTP_204_NO_CONTENT)
-            else:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='id module not exist!')
-    #¡fin try!
-    except Exception as e: 
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-        #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
-        #un error, en este caso el error esta contenido en HTTPException            }
+
+# @router.delete("/{uuid_module}")
+# def delete_module(uuid_module: str):
+#     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+#     #¡inicio try!
+#         #si falla, se detendrá el flujo común y se ejecutará las instrucciones del except
+#         session = get_db()
+#         db:Session
+#         for db in session:
+#             r=db.query(module_model).where(module_model.uuid_module == uuid_module).one_or_none()
+#             if r is not None:
+#                 db.delete(r)#instruccion para borrar un recurso
+#                 db.commit()
+#                 return Response(status_code=status.HTTP_204_NO_CONTENT)
+#             else:
+#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='id module not exist!')
+#     #¡fin try!
+#     except Exception as e: 
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+#         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
+#         #un error, en este caso el error esta contenido en HTTPException            }
