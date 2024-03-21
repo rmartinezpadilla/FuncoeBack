@@ -8,7 +8,7 @@ from app.auth.auth_bearer import JWTBearer
 router =  APIRouter(prefix='/days', dependencies=[Depends(JWTBearer())], tags=['Days'], responses={404 : {'message' : 'Not found'}})
 
 @router.get("/", response_model = typing.List[day_schema])
-async def get_days():
+def get_days():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()
@@ -26,7 +26,7 @@ async def get_days():
         #un error, en este caso el error esta contenido en HTTPException
 
 @router.get("/{id}", response_model = day_schema)
-async def read_day(id: str):
+def read_day(id: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
         session = get_db()

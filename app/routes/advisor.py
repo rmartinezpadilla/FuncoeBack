@@ -194,7 +194,7 @@ def delete_advisor(id: str):
             if r is not None:
                 db.delete(r)#instruccion para borrar un recurso
                 db.commit()
-                return Response(status_code=status.HTTP_200_OK)
+                return Response(status_code=status.HTTP_202_ACCEPTED)
             else:
                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Id advisor not exist!')
     #¡fin try!
@@ -205,11 +205,5 @@ def delete_advisor(id: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
         #la instrucción raise es similar a la instrucción return, pero en vez de retornar cualquier elemento, retornamos especificamente
         #un error, en este caso el error esta contenido en HTTPException            }
-    
-
-    """
-    ADVISOR FUNCTIONS
-    
-    """
 
 add_pagination(router)

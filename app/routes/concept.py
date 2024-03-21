@@ -111,7 +111,7 @@ def delete_concept(uuid_concept: str):
             if r is not None:
                 db.delete(r)#instruccion para borrar un recurso
                 db.commit()
-                return Response(status_code=status.HTTP_200_OK)
+                return Response(status_code=status.HTTP_204_NO_CONTENT)
             else:
                 raise  HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Concept not exist!')
     #¡fin try!

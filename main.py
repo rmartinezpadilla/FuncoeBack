@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.routes import advisor, blood_type, gender, day, document_type, concept, program, student, teacher, module, semester, enroll, payment, pensum, shifts, role, user
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Api funcoe",debug=True)
 app.include_router(user.router)
@@ -20,6 +21,17 @@ app.include_router(role.router)
 app.include_router(blood_type.router)
 app.include_router(day.router)
 app.include_router(gender.router)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 async def root():
