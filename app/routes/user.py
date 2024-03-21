@@ -168,7 +168,7 @@ def deactivate_user(user_uuid: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-@router.patch("/update/", response_model = user_schema_response)
+@router.patch("/", response_model = user_schema_response)
 def update_user(user_uuid: str, user_model_2: user_schema_login):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
@@ -191,7 +191,7 @@ def update_user(user_uuid: str, user_model_2: user_schema_login):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))        
 
-@router.delete("/delete/", dependencies=[Depends(JWTBearer())])
+@router.delete("/", dependencies=[Depends(JWTBearer())])
 def delete_user(uuid_user: str):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!
