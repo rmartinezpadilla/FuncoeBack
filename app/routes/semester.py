@@ -115,16 +115,11 @@ def delete_semester(uuid_semester: str):
         session = get_db()
         db:Session
         for db in session:
-            #one or none es una instrucción que nos permite encontrar uno o ningún recurso
-            #en caso que sea un recurso lo añadiremos al delete ya que es el que vamos a borrar
-            #en caso que sea None se lanza un error, ya que no tenemos un dato con el id a borrar
-            #si intentamos borrar algo que no existe (en el caso que sea None) nos lanzará una 
-            #excepción y será atrapada en el except
             r=db.query(semester_model).where(semester_model.uuid_semester == uuid_semester).one_or_none()
             if r is not None:
                 db.delete(r)#instruccion para borrar un recurso
                 db.commit()
-                return Response(status_code=status.HTTP_200_OK)
+                return Response(status_code=status.HTTP_204_NO_CONTENT)
             else:
                 return Response(status_code=status.HTTP_404_NOT_FOUND)
     #¡fin try!
