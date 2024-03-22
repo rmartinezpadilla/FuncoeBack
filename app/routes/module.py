@@ -104,16 +104,21 @@ def update_module(uuid:str, module_my_model: Module_update):
         session = get_db()
         db:Session
         for db in session:                        
-            r = db.query(module_model).filter_by(uuid_module = uuid).first()
-            if not r:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id module not exist!')
-            else:                
-                for key, value in module_my_model.model_dump(exclude_unset=True).items():
-                    setattr(r, key, value)                           
-                r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')                    
-                db.commit()
-                db.refresh(r)
-                return r
+            if not check_uuid_program(module_my_model.program_uuid):
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {module_my_model.program_uuid} program not exist')
+            if not check_uuid_semester(module_my_model.semester_uuid):
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'uuid {module_my_model.semester_uuid} semester not exist')            
+            else:
+                r = db.query(module_model).filter_by(uuid_module = uuid).first()
+                if not r:
+                    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='id module not exist!')
+                else:                
+                    for key, value in module_my_model.model_dump(exclude_unset=True).items():
+                        setattr(r, key, value)                           
+                    r.updated_at = datetime.today().strftime('%Y-%m-%d %H:%M:%S')                    
+                    db.commit()
+                    db.refresh(r)
+                    return r
 
     #¡fin try!
     except Exception as e:
