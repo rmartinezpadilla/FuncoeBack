@@ -41,7 +41,7 @@ def create_module(module_obj:module_schema):
     except Exception as e: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
     
-@router.get("/", response_model = typing.List[module_schema_response])
+@router.get("/all/", response_model = typing.List[module_schema_response])
 def get_modules():
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
     #¡inicio try!

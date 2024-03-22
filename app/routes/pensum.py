@@ -11,19 +11,6 @@ from sqlalchemy import desc
 
 router =  APIRouter(prefix='/pensum', dependencies=[Depends(JWTBearer())], tags=['Pensum'], responses={404 : {'message' : 'Not found'}})
 
-@router.get("/", response_model = typing.List[pensum_schema_response])
-def get_pensums():
-    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
-    #¡inicio try!
-        session = get_db()
-        db:Session
-        for db in session:
-            r=db.query(pensum_model).order_by(desc(pensum_model.created_at)).all()
-            return r
-    #¡fin try!
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-
 @router.post("/", response_model=pensum_schema_response)
 def create_pensum(pensum_obj:pensum_schema):
     try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
@@ -44,6 +31,19 @@ def create_pensum(pensum_obj:pensum_schema):
             #en el servicio
             db.refresh(pensum_obj)
             return pensum_obj
+    #¡fin try!
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+        
+@router.get("/all/", response_model = typing.List[pensum_schema_response])
+def get_pensums():
+    try:#instrucción try, atrapa de inicio a fin las lineas que intentaremos ejecutar y que tiene posibilidad de fallar
+    #¡inicio try!
+        session = get_db()
+        db:Session
+        for db in session:
+            r=db.query(pensum_model).order_by(desc(pensum_model.created_at)).all()
+            return r
     #¡fin try!
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
